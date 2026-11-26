@@ -1,0 +1,88 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import Lightbox from '../components/ui/Lightbox.astro';
+import { getSite } from '../lib/content';
+import { getColors } from '../lib/theme-colors';
+import { PRESET_IDS, type PresetId } from '../lib/themes';
+import { PRESET_FONTS, fontCss } from '../lib/fonts';
+import { absolute } from '../lib/seo';
+import { getStrings } from '../lib/i18n';
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  jsonLd?: object | object[];
+  /** Halaman katalog /dev memuat font semua preset. */
+  allPresets?: PresetId[];
+}
+const { title, description, ogImage, noindex = false, jsonLd, allPresets } = Astro.props;
+const preview = !!Astro.locals.preview?.canvas;
+const [site, { theme, colors }] = await Promise.all([getSite(Astro.locals), getColors(Astro.locals)]);
+const rootVars = Object.entries(colors.vars)
+  .map(([k, v]) => `${k}:${v}`)
+  .join(';');
+const css = fontCss(preview ? [...PRESET_IDS] : (allPresets ?? [theme.preset])) + `:root{${rootVars}}`;
+
+const fullTitle = title ? `${title} — ${site.ownerName}` : `${site.ownerName} — ${site.role}`;
+const desc = description || site.seo.description;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const og = absolute(ogImage || site.seo.ogImage, Astro.site);
+const headingFont = PRESET_FONTS[theme.preset].heading.url;
+const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+const t = await getStrings(Astro.locals);
+---
+
+<!doctype html>
+<html lang={t.lang} data-theme={theme.preset} data-card={colors.cardMode} data-motion={preview ? 'off' : theme.motion} data-preview={preview ? 'true' : undefined} id="top">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={desc} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content={colors.vars['--bg']} />
+    <link rel="icon" href={site.favicon || '/favicon.svg'} />
+    {site.favicon && <link rel="apple-touch-icon" href={site.favicon} />}
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.ownerName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={desc} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={t.lang === 'en' ? 'en_US' : 'id_ID'} />
+    {og && <meta property="og:image" content={og} />}
+    {og && <meta property="og:image:width" content="1200" />}
+    {og && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
+    <style set:html={css}></style>
+    {ld.map((d) => <script type="application/ld+json" set:html={JSON.stringify(d)} />)}
+    {!preview && <ClientRouter fallback="swap" />}
+  </head>
+  <body>
+    <a href="#main" class="skip-link">{t.skip}</a>
+    <Navbar />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Footer />
+    <Lightbox />
+    {
+      preview && (
+        <style is:inline>{`.pb-hidden-section{margin:0;padding:12px 24px;font:500 13px/1.4 system-ui,sans-serif;color:var(--muted);background:repeating-linear-gradient(45deg,transparent 0 8px,color-mix(in srgb,var(--text) 5%,transparent) 8px 16px);border-block:1px dashed var(--border)}`}</style>
+      )
+    }
+    {/* Di preview editor data-motion="off", jadi motion.ts tidak melakukan apa-apa. */}
+    <script>
+      import '../scripts/motion';
+    </script>
+  </body>
+</html>

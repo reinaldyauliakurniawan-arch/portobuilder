@@ -1,0 +1,59 @@
+{
+  "title": "Layanan",
+  "slug": "layanan",
+  "pageHeader": {
+    "enabled": true,
+    "eyebrow": "Layanan",
+    "subtitle": "Paket yang jelas, proses yang terbuka. Pilih yang paling pas, atau minta penawaran khusus.",
+    "image": "/uploads/sample/header-layanan.webp",
+    "imageAlt": "Komposisi bentuk hijau toska dan kuning",
+    "imageEdge": "fade-bottom",
+    "edgeIntensity": "medium"
+  },
+  "sections": [
+    {
+      "type": "services",
+      "enabled": true,
+      "variant": "cards",
+      "eyebrow": "Apa yang saya kerjakan",
+      "title": "Tiga cara kita bisa bekerja sama",
+      "intro": "Semua paket termasuk dua kali revisi besar dan file siap pakai.",
+      "items": [
+        { "title": "Identitas Brand", "description": "Logo, palet warna, tipografi, dan panduan brand 20 halaman. Cocok untuk usaha baru atau rebranding.", "price": "Mulai Rp7,5 juta", "cta": { "label": "Tanya paket ini", "linkType": "builtin", "builtinPage": "#kontak" } },
+        { "title": "Desain Website", "description": "Riset singkat, wireframe, dan desain UI responsif sampai siap diserahkan ke developer.", "price": "Mulai Rp12 juta", "cta": { "label": "Tanya paket ini", "linkType": "builtin", "builtinPage": "#kontak" } },
+        { "title": "Audit UX Aplikasi", "description": "Uji kegunaan dengan 5 pengguna asli, laporan temuan, dan rekomendasi perbaikan berurutan prioritas.", "price": "Mulai Rp5 juta" }
+      ]
+    },
+    {
+      "type": "services",
+      "enabled": true,
+      "variant": "numbered",
+      "title": "Bagaimana prosesnya",
+      "items": [
+        { "title": "Ngobrol dulu", "description": "Panggilan video 30 menit, gratis, untuk memahami tujuan dan batasan proyek." },
+        { "title": "Riset & arah", "description": "Saya pelajari pasar dan pengguna Anda, lalu menyajikan 2–3 arah desain." },
+        { "title": "Desain & uji", "description": "Arah terpilih dikembangkan dan diuji ke pengguna sebelum difinalkan." },
+        { "title": "Serah terima", "description": "Semua file, panduan, dan sesi tanya-jawab dengan tim Anda." }
+      ]
+    },
+    {
+      "type": "stats",
+      "enabled": true,
+      "variant": "inline",
+      "items": [
+        { "value": "98%", "label": "Klien puas" },
+        { "value": "3 mgg", "label": "Rata-rata durasi proyek brand" },
+        { "value": "24 jam", "label": "Waktu balas pesan" }
+      ]
+    },
+    {
+      "type": "ctaBanner",
+      "enabled": true,
+      "variant": "default",
+      "headline": "Belum yakin paket mana yang cocok?",
+      "button": { "label": "Baca FAQ", "linkType": "custom", "customPage": "faq" }
+    }
+  ],
+  "seo": { "description": "Layanan identitas brand, desain website, dan audit UX dari Raka Pratama. Harga jelas, proses terbuka.", "ogImage": "", "noindex": false },
+  "draft": false
+}

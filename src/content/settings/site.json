@@ -1,0 +1,20 @@
+{
+  "ownerName": "Raka Pratama",
+  "role": "Brand & UI/UX Designer",
+  "logo": "",
+  "favicon": "",
+  "email": "halo@namaweb.com",
+  "whatsapp": "6281234567890",
+  "socials": [
+    { "platform": "LinkedIn", "url": "https://www.linkedin.com/in/username" },
+    { "platform": "Instagram", "url": "https://www.instagram.com/username" },
+    { "platform": "Behance", "url": "https://www.behance.net/username" },
+    { "platform": "Dribbble", "url": "https://dribbble.com/username" }
+  ],
+  "cvFile": "",
+  "seo": {
+    "description": "Portfolio Raka Pratama, desainer brand dan UI/UX di Yogyakarta. Identitas visual, aplikasi, dan website untuk UMKM sampai startup.",
+    "ogImage": "/uploads/sample/og.webp"
+  },
+  "footerText": "Dibuat dengan teliti di Yogyakarta."
+}

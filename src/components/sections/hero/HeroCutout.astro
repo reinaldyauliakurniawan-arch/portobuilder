@@ -1,0 +1,243 @@
+---
+import Arrow from '../../ui/Arrow.astro';
+// Hero Cutout: watermark pudar → halftone → nama aksen → subjek tanpa latar (atau sebaliknya, `nameLayer`).
+// Foto yang belum transparan otomatis memakai fallback edge dissolve kuat (peringatan di build log).
+import type { Section } from '../../../lib/schemas';
+import { ctaHref, getSite } from '../../../lib/content';
+import { isCutout } from '../../../lib/image';
+import { ed } from '../../../lib/edit';
+import Img from '../../ui/Img.astro';
+import BigName from './BigName.astro';
+import { getStrings } from '../../../lib/i18n';
+
+interface Props {
+  data: Extract<Section, { type: 'hero' }>;
+  first?: boolean;
+  eager?: boolean;
+}
+const { data, first = false, eager = false } = Astro.props;
+const l = Astro.locals;
+const site = await getSite(l);
+const name = data.displayName || site.ownerName;
+const watermark = data.watermarkText || name.split(/\s+/)[0];
+const src = data.cutoutImage || data.image!;
+const transparent = data.cutoutImage ? await isCutout(data.cutoutImage, l) : false;
+const cta = data.textCta ? { ...data.textCta, href: await ctaHref(data.textCta, 'Hero', l) } : undefined;
+const services = data.rotatingServices;
+const t = await getStrings(Astro.locals);
+---
+
+<section class:list={['cutout', `layer-${data.nameLayer}`]} data-hero style={`--chars:${[...name].length + 1}`}>
+  <p class="co-watermark" aria-hidden="true" data-fade-in data-parallax-x="-8">{watermark}</p>
+  <div class="co-stage">
+    <div class="co-halftone halftone" aria-hidden="true" data-pop></div>
+    <div class="co-name">
+      <BigName name={name} suffix={site.nameSuffix} as={first ? 'h1' : 'p'} editPath="displayName" />
+    </div>
+    <div class:list={['co-subject', transparent ? 'is-cutout' : 'edge-dissolve edge-strong']} data-subject-intro data-parallax="-6">
+      <Img src={src} alt={data.imageAlt ?? ''} eager={eager} sizes="(min-width: 768px) 50vw, 90vw" maxWidth={1400} />
+    </div>
+    {
+      (data.intro || cta) && (
+        <div class="co-left" data-rise>
+          {data.intro && (
+            <p class="co-intro" {...ed(l, 'intro')}>
+              {data.intro}
+            </p>
+          )}
+          {cta && (
+            <a href={cta.href} class="co-cta">
+              <span {...ed(l, 'textCta.label')}>{cta.label}</span>
+              <Arrow class="co-arrow" />
+            </a>
+          )}
+        </div>
+      )
+    }
+    {
+      services.length > 0 && (
+        <ul class="co-services" data-rotate aria-label={t.services} aria-live="off" data-rise>
+          {services.map((s, i) => (
+            <li class:list={[i === 0 && 'is-active']} {...ed(l, `rotatingServices.${i}`)}>
+              {s}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .cutout {
+    --name-size: min(clamp(56px, 11vw, 180px), calc(94vw / (var(--chars) * 0.66)));
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    /* naik ke belakang navbar supaya watermark terpotong tepi atas */
+    margin-top: -72px;
+    padding-top: 72px;
+  }
+  .co-watermark {
+    position: absolute;
+    z-index: 0;
+    left: 50%;
+    top: 0;
+    translate: -50% -34%;
+    font-family: var(--font-heading);
+    font-size: 26vw;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+    color: color-mix(in srgb, var(--text) 4%, transparent);
+    pointer-events: none;
+  }
+  .co-stage {
+    position: relative;
+    max-width: calc(1280px + var(--gutter) * 2);
+    margin-inline: auto;
+    padding: clamp(40px, 6vw, 88px) var(--gutter) 0;
+    min-height: min(88svh, 980px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .co-halftone {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    bottom: 0;
+    width: min(760px, 80vw);
+    aspect-ratio: 1;
+    translate: -50% 8%;
+  }
+  .co-name {
+    position: relative;
+    z-index: 2;
+    font-size: var(--name-size);
+    text-align: center;
+    color: var(--accent);
+    --name-weight: 900;
+    --name-tracking: -0.03em;
+  }
+  .co-name :global(.big-name) {
+    line-height: 0.9;
+  }
+  .co-subject {
+    position: relative;
+    z-index: 3;
+    /* bagian atas subjek menimpa ±30% tinggi huruf nama */
+    margin-top: calc(var(--name-size) * -0.3);
+    height: min(75svh, 820px);
+    display: flex;
+    justify-content: center;
+  }
+  .co-subject :global(img) {
+    height: 100%;
+    width: auto;
+    max-width: min(90vw, 720px);
+    object-fit: contain;
+    object-position: 50% 100%;
+    aspect-ratio: auto !important;
+  }
+  .co-subject.is-cutout :global(img) {
+    filter: drop-shadow(0 24px 32px rgb(0 0 0 / 0.1));
+    -webkit-mask-image: linear-gradient(to bottom, #000 78%, transparent);
+    mask-image: linear-gradient(to bottom, #000 78%, transparent);
+  }
+  .layer-front .co-name {
+    z-index: 4;
+  }
+  .co-left,
+  .co-services {
+    position: absolute;
+    z-index: 5;
+    top: 52%;
+  }
+  .co-left {
+    left: var(--gutter);
+    max-width: 300px;
+  }
+  .co-intro {
+    font-size: clamp(1.125rem, 1rem + 0.35vw, 1.375rem);
+    font-weight: 600;
+    line-height: 1.35;
+    color: var(--text);
+  }
+  .co-cta {
+    display: inline-flex;
+    gap: 8px;
+    margin-top: 20px;
+    font-weight: 700;
+    color: var(--text);
+    text-decoration: none;
+  }
+  .co-arrow {
+    transition: transform 0.2s;
+  }
+  .co-cta:hover .co-arrow {
+    transform: translateX(4px);
+  }
+  .co-services {
+    right: var(--gutter);
+    text-align: right;
+    display: grid;
+    gap: 8px;
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+  .co-services li {
+    color: var(--muted);
+    transition: color 0.4s;
+  }
+  .co-services li.is-active {
+    color: var(--text);
+  }
+  @media (max-width: 1023px) {
+    .co-left,
+    .co-services {
+      position: static;
+      text-align: center;
+      max-width: none;
+    }
+    .co-left {
+      margin-top: 24px;
+    }
+    .co-services {
+      margin: 20px calc(var(--gutter) * -1) 0;
+      padding: 0 var(--gutter);
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      max-width: 100vw;
+      justify-content: safe center;
+      font-size: 0.9375rem;
+    }
+    .co-services li {
+      flex: none;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid var(--divider);
+    }
+    .co-services li.is-active {
+      border-color: var(--text);
+    }
+  }
+  @media (max-width: 767px) {
+    .cutout {
+      --name-size: clamp(44px, 16vw, 80px);
+    }
+    .co-watermark {
+      display: none;
+    }
+    .co-name :global(.big-name) {
+      white-space: normal;
+      text-wrap: balance;
+    }
+    .co-subject {
+      height: 55svh;
+    }
+  }
+</style>

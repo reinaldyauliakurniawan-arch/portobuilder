@@ -1,0 +1,144 @@
+---
+import Arrow from '../ui/Arrow.astro';
+import type { Section } from '../../lib/schemas';
+import { getSite } from '../../lib/content';
+
+import { ed } from '../../lib/edit';
+import { getStrings } from '../../lib/i18n';
+interface Props {
+  data: Extract<Section, { type: 'contact' }>;
+  /** posisi section di halaman: untuk id unik. Section kontak pertama mendapat anchor #kontak. */
+  index?: number;
+  anchor?: boolean;
+}
+const l = Astro.locals;
+const { data, index = 0, anchor = true } = Astro.props;
+const site = await getSite(Astro.locals);
+const wa = site.whatsapp ? `https://wa.me/${site.whatsapp}` : undefined;
+const split = data.variant === 'split';
+const formId = `kontak-${index}`;
+const t = await getStrings(Astro.locals);
+---
+
+<section class="section" id={anchor ? 'kontak' : undefined} aria-labelledby={`${formId}-title`}>
+  <div class:list={['container-x grid gap-10', split && data.showForm ? 'md:grid-cols-12 md:gap-16' : 'max-w-3xl']}>
+    <div class:list={[split && data.showForm ? 'md:col-span-5' : 'text-center']} data-reveal>
+      <h2 class="h2" id={`${formId}-title`} {...ed(l, 'title')}>{data.title}</h2>
+      {data.text && <p class="lead mt-5" {...ed(l, 'text')}>{data.text}</p>}
+      {
+        data.showDirect && (
+          <ul class:list={['mt-8 flex flex-col gap-4', !(split && data.showForm) && 'items-center']} role="list">
+            <li class="flex flex-wrap items-center gap-3">
+              <a class="link text-[length:var(--fs-lead)] font-semibold" href={`mailto:${site.email}`}>
+                {site.email}
+              </a>
+              <button type="button" class="copy-btn" data-copy={site.email} data-copied={t.copied} data-failed={t.copyFailed} data-idle={t.copyEmail}>
+                <span data-label>{t.copyEmail}</span>
+              </button>
+            </li>
+            {wa && (
+              <li>
+                <a class="btn btn-secondary" href={wa} target="_blank" rel="noopener">
+                  {t.chatWa} <Arrow dir="ne" />
+                </a>
+              </li>
+            )}
+          </ul>
+        )
+      }
+    </div>
+
+    {
+      data.showForm && (
+        <div class:list={[split ? 'md:col-span-7' : '']} data-reveal>
+          <p class="form-success card mb-6 p-6 font-semibold" role="status" hidden>
+            {t.formThanks}
+          </p>
+          <form
+            name="kontak"
+            method="POST"
+            action={`${Astro.url.pathname}?terkirim=1#kontak`}
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            class="card grid gap-5 p-6 md:p-10"
+          >
+            <input type="hidden" name="form-name" value="kontak" />
+            <p class="hidden">
+              <label>
+                {t.honeypot} <input name="bot-field" tabindex="-1" autocomplete="off" />
+              </label>
+            </p>
+            <div class="grid gap-5 sm:grid-cols-2">
+              <div class="grid gap-2">
+                <label for={`${formId}-name`} class="font-semibold">
+                  {t.formName}
+                </label>
+                <input id={`${formId}-name`} name="nama" class="field" required autocomplete="name" />
+              </div>
+              <div class="grid gap-2">
+                <label for={`${formId}-email`} class="font-semibold">
+                  {t.formEmail}
+                </label>
+                <input id={`${formId}-email`} name="email" type="email" class="field" required autocomplete="email" />
+              </div>
+            </div>
+            <div class="grid gap-2">
+              <label for={`${formId}-msg`} class="font-semibold">
+                {t.formMessage}
+              </label>
+              <textarea id={`${formId}-msg`} name="pesan" rows="5" class="field" required />
+            </div>
+            <button type="submit" class="btn btn-primary justify-self-start">
+              {t.formSend}
+            </button>
+          </form>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<script>
+  function initContact() {
+    if (new URLSearchParams(location.search).has('terkirim'))
+      document.querySelectorAll<HTMLElement>('.form-success').forEach((el) => (el.hidden = false));
+    document.querySelectorAll<HTMLButtonElement>('[data-copy]:not([data-ready])').forEach((b) => {
+      b.dataset.ready = '1';
+      b.addEventListener('click', async () => {
+        const label = b.querySelector<HTMLElement>('[data-label]')!;
+        try {
+          await navigator.clipboard.writeText(b.dataset.copy!);
+          label.textContent = b.dataset.copied!;
+        } catch {
+          label.textContent = b.dataset.failed!;
+        }
+        setTimeout(() => (label.textContent = b.dataset.idle!), 2000);
+      });
+    });
+  }
+  document.addEventListener('astro:page-load', initContact);
+</script>
+
+<style>
+  .copy-btn {
+    min-height: 40px;
+    padding: 6px 14px;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .copy-btn:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+  textarea.field {
+    resize: vertical;
+  }
+</style>

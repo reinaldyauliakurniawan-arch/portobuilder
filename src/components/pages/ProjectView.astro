@@ -1,0 +1,157 @@
+---
+import Arrow from '../ui/Arrow.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Img from '../ui/Img.astro';
+import YouTube from '../ui/YouTube.astro';
+import Markdown from '../ui/Markdown.astro';
+import { getSite, type Project } from '../../lib/content';
+import { cdnUrl } from '../../lib/image';
+import { absolute, creativeWorkJsonLd } from '../../lib/seo';
+import { ed } from '../../lib/edit';
+import { getStrings } from '../../lib/i18n';
+
+interface Props {
+  project: Project;
+  prev?: Project;
+  next?: Project;
+}
+const { project, prev, next } = Astro.props;
+const l = Astro.locals;
+const p = project.data;
+const site = await getSite(l);
+const t = await getStrings(l);
+const url = new URL(`/projects/${project.id}`, Astro.site).href;
+const ld = creativeWorkJsonLd(p, url, absolute(p.cover, Astro.site)!, site.ownerName);
+const meta = [
+  [t.year, String(p.year)],
+  [t.category, p.category],
+  [t.role, p.role],
+  [t.client, p.client],
+].filter((m): m is [string, string] => !!m[1]);
+---
+
+<BaseLayout title={p.title} description={p.summary} ogImage={p.cover} jsonLd={ld}>
+  <article>
+    <header class="section pb-0 pt-12 md:pt-20">
+      <div class="container-x">
+        <a href="/projects" class="link meta mb-8 inline-flex items-center gap-1 font-semibold"><Arrow dir="w" /> {t.allProjects}</a>
+        <p class="eyebrow mb-4" data-hero-line>{p.category}</p>
+        <h1 class="h1 max-w-5xl" data-hero-line {...ed(l, 'page.title')}>{p.title}</h1>
+        <p class="lead mt-6 max-w-2xl" data-hero-line {...ed(l, 'page.summary')}>{p.summary}</p>
+
+        <dl class="divider-t mt-12 grid grid-cols-2 gap-6 pt-6 md:grid-cols-4" data-hero-line>
+          {
+            meta.map(([k, v]) => (
+              <div>
+                <dt class="meta">{k}</dt>
+                <dd class="mt-1 font-semibold">{v}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        {
+          p.tools.length > 0 && (
+            <ul class="mt-6 flex flex-wrap gap-2" role="list" aria-label="Tools">
+              {p.tools.map((t) => (
+                <li class="badge">{t}</li>
+              ))}
+            </ul>
+          )
+        }
+        {
+          p.externalUrl && (
+            <a href={p.externalUrl} class="btn btn-primary mt-8" target="_blank" rel="noopener">
+              {t.viewLive} <Arrow dir="ne" />
+            </a>
+          )
+        }
+      </div>
+    </header>
+
+    <div class="container-x mt-12 md:mt-16">
+      <div class="overflow-hidden rounded-[var(--radius-card)]">
+        <Img src={p.cover} alt={p.coverAlt} ratio={4 / 3} eager sizes="(min-width: 1376px) 1280px, 100vw" />
+      </div>
+    </div>
+
+    {
+      project.body?.trim() && (
+        <div class="section container-x">
+          <Markdown content={project.body} class="mx-auto" />
+        </div>
+      )
+    }
+
+    {
+      p.gallery.length > 0 && (
+        <section class="section pt-0" aria-label={t.gallery}>
+          <div class="container-x grid gap-6 md:grid-cols-2">
+            {p.gallery.map((g, i) => (
+              <figure class:list={[i % 3 === 0 && 'md:col-span-2']}>
+                <button
+                  type="button"
+                  class="block w-full cursor-zoom-in overflow-hidden rounded-[var(--radius)]"
+                  data-lightbox="proyek"
+                  data-src={cdnUrl(g.image, 2000, undefined, 75, l)}
+                  data-alt={g.alt}
+                  data-caption={g.caption ?? ''}
+                  aria-label={`${t.enlarge}: ${g.alt}`}
+                  data-clip
+                >
+                  <Img src={g.image} alt={g.alt} ratio={i % 3 === 0 ? 16 / 9 : 4 / 3} sizes={i % 3 === 0 ? '100vw' : '50vw'} />
+                </button>
+                {g.caption && <figcaption class="meta mt-2" {...ed(l, `page.gallery.${i}.caption`)}>{g.caption}</figcaption>}
+              </figure>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    {
+      p.videos.length > 0 && (
+        <section class="section pt-0" aria-label={t.videos}>
+          <div class="container-x mx-auto grid max-w-5xl gap-12">
+            {p.videos.map((v) => (
+              <YouTube url={v.youtubeUrl} title={v.title} />
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </article>
+
+  <nav class="container-x divider-t grid gap-6 py-12 sm:grid-cols-2" aria-label={t.otherProjects}>
+    {
+      prev ? (
+        <a href={`/projects/${prev.id}`} class="pager">
+          <span class="meta"><Arrow dir="w" /> {t.prev}</span>
+          <span class="h3">{prev.data.title}</span>
+        </a>
+      ) : (
+        <span />
+      )
+    }
+    {
+      next && (
+        <a href={`/projects/${next.id}`} class="pager sm:text-right">
+          <span class="meta">{t.next} <Arrow /></span>
+          <span class="h3">{next.data.title}</span>
+        </a>
+      )
+    }
+  </nav>
+</BaseLayout>
+
+<style>
+  .pager {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    text-decoration: none;
+  }
+  .pager:hover .h3 {
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+</style>

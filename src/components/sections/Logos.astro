@@ -1,0 +1,110 @@
+---
+import type { Section } from '../../lib/schemas';
+import { getDimensions } from '../../lib/image';
+
+import { ed } from '../../lib/edit';
+interface Props {
+  data: Extract<Section, { type: 'logos' }>;
+}
+const l = Astro.locals;
+const { data } = Astro.props;
+const items = await Promise.all(
+  data.items.map(async (it) => {
+    const d = await getDimensions(it.logo, Astro.locals);
+    return { ...it, width: Math.round((d.width / d.height) * 40), height: 40 };
+  }),
+);
+---
+
+<section class:list={['section py-12 md:py-16', `tone-${data.logoTone}`]}>
+  <div class="container-x">
+    {data.title && <h2 class="meta mb-8 text-center text-base font-semibold" {...ed(l, 'title')}>{data.title}</h2>}
+    {
+      data.variant === 'marquee' ? (
+        <div class="marquee overflow-hidden" style="mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)">
+          <ul class="marquee-track" role="list">
+            {[0, 1].map((copy) =>
+              items.map((it) => (
+                <li class="logo-item px-8 md:px-12" aria-hidden={copy === 1 ? 'true' : undefined}>
+                  <img src={it.logo} alt={copy === 0 ? it.name : ''} width={it.width} height={it.height} loading="lazy" decoding="async" />
+                </li>
+              )),
+            )}
+          </ul>
+        </div>
+      ) : data.variant === 'tiles' ? (
+        <ul class="logo-tiles" role="list">
+          {items.map((it) => (
+            <li class="logo-item logo-tile">
+              <img src={it.logo} alt="" width={it.width} height={it.height} loading="lazy" decoding="async" />
+              <span>{it.name}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul class="flex flex-wrap items-center justify-center gap-x-12 gap-y-8" role="list">
+          {items.map((it) => (
+            <li class="logo-item">
+              <img src={it.logo} alt={it.name} width={it.width} height={it.height} loading="lazy" decoding="async" />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .logo-item img {
+    height: 40px;
+    width: auto;
+    max-width: none;
+    transition:
+      opacity 0.3s,
+      filter 0.3s;
+  }
+  /* mono: grayscale 60%, kembali berwarna saat disentuh */
+  .tone-mono .logo-item img {
+    filter: grayscale(1);
+    opacity: 0.6;
+  }
+  .tone-mono .logo-item:hover img {
+    filter: none;
+    opacity: 1;
+  }
+  .logo-tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  @media (min-width: 640px) {
+    .logo-tiles {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1024px) {
+    .logo-tiles {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+  }
+  .logo-tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 56px;
+    padding: 8px 12px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text);
+    transition: background-color 0.3s;
+  }
+  .logo-tile:hover {
+    background: color-mix(in srgb, var(--surface) 88%, var(--text));
+  }
+  .logo-tile img {
+    height: 24px;
+  }
+</style>

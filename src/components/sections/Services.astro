@@ -1,0 +1,63 @@
+---
+import type { Section } from '../../lib/schemas';
+import SectionHeading from '../ui/SectionHeading.astro';
+import CtaLink from '../ui/CtaLink.astro';
+
+import { ed } from '../../lib/edit';
+interface Props {
+  data: Extract<Section, { type: 'services' }>;
+}
+const l = Astro.locals;
+const { data } = Astro.props;
+---
+
+<section class="section">
+  <div class="container-x">
+    <SectionHeading eyebrow={data.eyebrow} title={data.title} intro={data.intro} />
+    {
+      data.variant === 'cards' ? (
+        <ul class="grid gap-8 md:grid-cols-2 lg:grid-cols-3" role="list">
+          {data.items.map((s, i) => (
+            <li class:list={['card flex flex-col gap-4 p-8', s.cta && 'card-hover']} data-reveal>
+              <h3 class="h3" {...ed(l, `items.${i}.title`)}>{s.title}</h3>
+              <p class="text-muted" {...ed(l, `items.${i}.description`)}>{s.description}</p>
+              {(s.price || s.cta) && (
+                <div class:list={['mt-auto flex flex-wrap items-center justify-between gap-4', s.price && 'divider-t pt-6']}>
+                  {s.price && <p class="font-semibold" {...ed(l, `items.${i}.price`)}>{s.price}</p>}
+                  {/* card-link: seluruh kartu bisa diklik (bukan hanya teks link). */}
+                  {s.cta && <CtaLink link={s.cta} editPath={`items.${i}.cta`} variant="link" where="Layanan" class="card-link" />}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ol class="divider-t" role="list">
+          {data.items.map((s, i) => (
+            <li class="divider-b grid gap-4 py-8 md:grid-cols-12 md:gap-8" data-reveal>
+              <span class="num md:col-span-2" aria-hidden="true">
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <h3 class="h3 md:col-span-4" {...ed(l, `items.${i}.title`)}>{s.title}</h3>
+              <div class="md:col-span-6">
+                <p class="text-muted" {...ed(l, `items.${i}.description`)}>{s.description}</p>
+                {s.price && <p class="mt-3 font-semibold" {...ed(l, `items.${i}.price`)}>{s.price}</p>}
+                {s.cta && <CtaLink link={s.cta} editPath={`items.${i}.cta`} variant="link" where="Layanan" class="mt-3 inline-block" />}
+              </div>
+            </li>
+          ))}
+        </ol>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .num {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+    line-height: 1;
+    color: var(--accent);
+    font-weight: var(--heading-weight);
+  }
+</style>

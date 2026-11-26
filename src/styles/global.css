@@ -1,0 +1,634 @@
+@import 'tailwindcss';
+@import './themes.css';
+
+/* Semua warna wajib lewat token tema: palet bawaan Tailwind dimatikan. */
+@theme {
+  --color-*: initial;
+  --font-*: initial;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-contrast: var(--accent-contrast);
+  --color-accent-hover: var(--accent-hover);
+  --color-transparent: transparent;
+  --font-head: var(--font-heading);
+  --font-sans: var(--font-body);
+  --radius-card: var(--radius-card);
+  --radius-theme: var(--radius);
+}
+
+@layer base {
+  :root {
+    --container: 1280px;
+    --gutter: clamp(20px, 4vw, 48px);
+    --section-y: clamp(64px, 9vw, 128px);
+    --divider: color-mix(in oklab, var(--text) 12%, var(--bg));
+    /* Skala untuk Montserrat (lebar, x-height tinggi): lebih kecil dari skala serif awal. */
+    --fs-body: clamp(1rem, 0.96rem + 0.15vw, 1.0625rem);
+    --fs-small: 0.875rem;
+    --fs-h1: clamp(2.5rem, 1.3rem + 3.4vw, 4.5rem);
+    --fs-h2: clamp(1.75rem, 1.3rem + 1.8vw, 2.75rem);
+    --fs-h3: clamp(1.25rem, 1.15rem + 0.45vw, 1.5rem);
+    --fs-lead: clamp(1.0625rem, 1rem + 0.3vw, 1.25rem);
+    color-scheme: light;
+  }
+  [data-card='dark'] {
+    color-scheme: dark;
+  }
+
+  html {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    scroll-padding-top: 96px;
+  }
+  body {
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: clip;
+  }
+  main {
+    flex: 1;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-tracking);
+  }
+  /* Teks kecil tidak memakai tracking negatif. */
+  h3,
+  h4 {
+    letter-spacing: 0;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    line-height: 1.08;
+    text-wrap: balance;
+    /* Satu kata panjang (mis. nama program) tidak boleh melebar keluar layar HP. */
+    overflow-wrap: break-word;
+    hyphens: auto;
+  }
+  p {
+    text-wrap: pretty;
+  }
+  a {
+    color: inherit;
+  }
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+  /* Permukaan bawaan browser ikut tema (caret, checkbox, scrollbar). */
+  :root {
+    accent-color: var(--accent);
+    caret-color: var(--accent);
+    scrollbar-color: color-mix(in oklab, var(--text) 28%, var(--bg)) var(--bg);
+  }
+  :focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+@layer components {
+  .container-x {
+    width: 100%;
+    max-width: calc(var(--container) + var(--gutter) * 2);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+  .section {
+    padding-block: var(--section-y);
+  }
+  /* Section berurutan berbagi satu jarak (bukan bawah + atas = dua kali). */
+  .section + .section,
+  [data-section] + [data-section] > .section {
+    padding-top: 0;
+  }
+  .section.pb-0 + .section {
+    padding-top: clamp(48px, 6vw, 80px);
+  }
+  .h1 {
+    font-size: var(--fs-h1);
+    text-transform: var(--heading-case);
+  }
+  .h2 {
+    font-size: var(--fs-h2);
+    text-transform: var(--heading-case);
+  }
+  .h3 {
+    font-size: var(--fs-h3);
+    line-height: 1.2;
+  }
+  .lead {
+    font-size: var(--fs-lead);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .eyebrow {
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .meta {
+    font-size: var(--fs-small);
+    color: var(--muted);
+  }
+
+  /* Tombol */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 12px 24px;
+    border-radius: var(--radius-button);
+    font-weight: 600;
+    font-size: 1rem;
+    line-height: 1.2;
+    text-decoration: none;
+    border: 2px solid transparent;
+    box-shadow: var(--shadow-button);
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s,
+      transform 0.2s,
+      box-shadow 0.2s;
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-button-hover);
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: var(--accent-contrast);
+  }
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    color: var(--accent-hover-contrast);
+  }
+  .btn-secondary {
+    border-color: var(--text);
+    color: var(--text);
+    background: transparent;
+  }
+  .btn-secondary:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+  [data-theme='brutal'] .btn {
+    border-color: var(--text);
+  }
+
+  .link {
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+    transition: color 0.2s;
+  }
+  .link:hover {
+    color: var(--accent-hover);
+    text-decoration-thickness: 2px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: var(--fs-small);
+    border: 1px solid var(--divider);
+    color: var(--text);
+    background: var(--surface);
+  }
+
+  /*
+   * Kartu: radius + shadow wajib. Shadow hover di-fade lewat ::after (opacity),
+   * bukan dengan menganimasikan box-shadow.
+   */
+  .card {
+    position: relative;
+    isolation: isolate;
+    background: var(--surface);
+    border-radius: var(--radius-card);
+    border: var(--card-border);
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 0.5s;
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    box-shadow: var(--shadow-card-hover);
+    opacity: 0;
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+  }
+  .card-media {
+    overflow: hidden;
+    border-radius: calc(var(--radius-card) - 1px) calc(var(--radius-card) - 1px) 0 0;
+  }
+  .card-media img {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .card-hover:hover,
+  .card-hover:focus-within {
+    transform: translateY(-4px);
+    border: var(--card-border-hover);
+  }
+  .card-hover:hover::after,
+  .card-hover:focus-within::after {
+    opacity: 1;
+  }
+  .card-hover:hover .card-media img,
+  .card-hover:focus-within .card-media img {
+    transform: scale(1.04);
+  }
+  .card-hover:hover .card-title,
+  .card-hover:focus-within .card-title {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.18em;
+  }
+  /* Seluruh kartu bisa diklik: link judul membentang menutupi kartu. */
+  .card-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .card-link {
+    text-decoration: none;
+  }
+  .card-hover:hover .card-link.link,
+  .card-hover:focus-within .card-link.link {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.2em;
+  }
+  /* Kanvas editor: overlay link tidak boleh menutupi teks yang bisa diedit. */
+  [data-preview] .card-link::before {
+    display: none;
+  }
+
+  .arrow-i {
+    display: inline-block;
+    flex: none;
+    vertical-align: -0.125em;
+    transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  a:hover .arrow-e,
+  .card-hover:hover .arrow-e {
+    transform: translateX(3px);
+  }
+  a:hover .arrow-ne,
+  .card-hover:hover .arrow-ne {
+    transform: translate(2px, -2px);
+  }
+  a:hover .arrow-w {
+    transform: translateX(-3px);
+  }
+  .card-link:focus-visible {
+    outline: none;
+  }
+  .card:has(.card-link:focus-visible) {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  /* Perlakuan tepi gambar (Bagian 9). Intensitas diatur lewat --edge. */
+  .edge-soft {
+    --edge: var(--edge-soft);
+  }
+  .edge-medium {
+    --edge: var(--edge-medium);
+  }
+  .edge-strong {
+    --edge: var(--edge-strong);
+  }
+  .edge-frame {
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .edge-vignette img,
+  .edge-vignette video {
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 var(--edge, 55%), transparent 100%);
+    mask-image: radial-gradient(ellipse at center, #000 var(--edge, 55%), transparent 100%);
+  }
+  .edge-fade-bottom img,
+  .edge-fade-bottom video {
+    -webkit-mask-image: linear-gradient(to bottom, #000 var(--edge, 55%), transparent);
+    mask-image: linear-gradient(to bottom, #000 var(--edge, 55%), transparent);
+  }
+  /* dissolve = vignette ∩ fade-bottom: keempat tepi larut ke latar. */
+  .edge-dissolve img,
+  .edge-dissolve video {
+    -webkit-mask-image:
+      radial-gradient(ellipse 75% 70% at 50% 40%, #000 var(--edge, 55%), transparent 100%),
+      linear-gradient(to bottom, #000 calc(var(--edge, 55%) + 15%), transparent);
+    -webkit-mask-composite: source-in;
+    mask-image:
+      radial-gradient(ellipse 75% 70% at 50% 40%, #000 var(--edge, 55%), transparent 100%),
+      linear-gradient(to bottom, #000 calc(var(--edge, 55%) + 15%), transparent);
+    mask-composite: intersect;
+  }
+  /* fade-left = latar (lokal) menutup sisi kiri untuk teks + bawah lembut. Overlay, bukan mask. */
+  .edge-fade-left {
+    position: relative;
+  }
+  .edge-fade-left::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      linear-gradient(90deg, var(--bg) 0%, var(--bg) 30%, transparent 65%),
+      linear-gradient(to top, color-mix(in srgb, var(--bg) 70%, transparent) 0%, transparent 35%);
+  }
+  .edge-dark-vignette {
+    position: relative;
+  }
+  .edge-dark-vignette::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent var(--edge, 55%), rgb(0 0 0 / 0.65) 100%);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: 16px;
+    top: -100px;
+    z-index: 100;
+    padding: 12px 16px;
+    background: var(--accent);
+    color: var(--accent-contrast);
+    border-radius: var(--radius);
+    font-weight: 600;
+  }
+  .skip-link:focus {
+    top: 16px;
+  }
+
+  /* Form */
+  .field {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text);
+    font: inherit;
+  }
+  .field:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  /* Rich text dari markdown */
+  .prose {
+    max-width: 680px;
+  }
+  .prose > * + * {
+    margin-top: 1.1em;
+  }
+  .prose h2 {
+    font-size: var(--fs-h3);
+    margin-top: 2em;
+    line-height: 1.2;
+  }
+  .prose h3 {
+    font-size: 1.25rem;
+    margin-top: 1.6em;
+    line-height: 1.25;
+  }
+  .prose a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+  .prose ul {
+    list-style: disc;
+    padding-left: 1.4em;
+  }
+  .prose ol {
+    list-style: decimal;
+    padding-left: 1.4em;
+  }
+  .prose li + li {
+    margin-top: 0.4em;
+  }
+  .prose blockquote {
+    border-left: 3px solid var(--accent);
+    padding-left: 1.2em;
+    font-family: var(--font-heading);
+    font-size: var(--fs-lead);
+    line-height: 1.4;
+  }
+  .prose img {
+    border-radius: var(--radius);
+  }
+  .prose strong {
+    font-weight: 650;
+  }
+  .prose code {
+    font-size: 0.9em;
+    background: var(--surface);
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+  }
+
+  /* Marquee logo klien: CSS murni, berhenti saat hover */
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 30s linear infinite;
+  }
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+
+@layer components {
+  .glass {
+    background:
+      linear-gradient(rgb(var(--scrim) / var(--glass-scrim, 0)), rgb(var(--scrim) / var(--glass-scrim, 0))),
+      var(--glass-bg);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-highlight);
+  }
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+    }
+  }
+  /* Siku kecil berwarna aksen di sudut kiri atas */
+  .corner-mark::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 8px;
+    height: 8px;
+    border-top: 1px solid var(--accent);
+    border-left: 1px solid var(--accent);
+  }
+  .availability {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+  }
+  .availability.is-pill {
+    min-height: 32px;
+    padding: 4px 12px 4px 10px;
+    border-radius: 9999px;
+    background: var(--surface);
+    border: 1px solid var(--divider);
+  }
+  .pulse-dot {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+    background: var(--success);
+    flex: none;
+  }
+  .pulse-dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--success);
+    animation: pulse-dot 2s ease-out infinite;
+  }
+  @keyframes pulse-dot {
+    from {
+      transform: scale(1);
+      opacity: 0.6;
+    }
+    to {
+      transform: scale(2.6);
+      opacity: 0;
+    }
+  }
+  /* Tekstur halftone CSS (Cutout): titik aksen yang memudar melingkar */
+  .halftone {
+    background-image: radial-gradient(circle, color-mix(in srgb, var(--accent) 35%, transparent) 1.25px, transparent 1.6px);
+    background-size: 8px 8px;
+    -webkit-mask-image: radial-gradient(closest-side, #000 20%, transparent 100%);
+    mask-image: radial-gradient(closest-side, #000 20%, transparent 100%);
+  }
+}
+
+/* Huruf nama raksasa yang dipecah motion.ts: mask per huruf */
+.ch-mask {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: top;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+.ch-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+.ch {
+  display: inline-block;
+}
+
+[data-motion='subtle'] .pulse-dot::after {
+  animation: none;
+  opacity: 0;
+}
+
+/* Motion level off / reduced motion: matikan animasi non-esensial. */
+[data-motion='off'] *,
+[data-motion='off'] *::before,
+[data-motion='off'] *::after {
+  animation: none !important;
+  transition-duration: 0s !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+  }
+}
+[data-motion='subtle'] :is(a, .card-hover):hover .arrow-i,
+[data-motion='subtle'] .card-hover:hover,
+[data-motion='subtle'] .card-hover:focus-within,
+[data-motion='subtle'] .btn:hover {
+  transform: none;
+}
+
+/* View Transitions: fade 0,3 s */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+}
+
+@layer components {
+  .divider-t {
+    border-top: 1px solid var(--divider);
+  }
+  .divider-b {
+    border-bottom: 1px solid var(--divider);
+  }
+  /* Dipakai katalog /dev/sections: wrapper ber-tema sendiri. */
+  [data-theme]:not(html) {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+  }
+}

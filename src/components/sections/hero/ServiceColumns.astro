@@ -1,0 +1,119 @@
+---
+// Kolom layanan di bawah hero Spotlight & panel kaca Showcase. Siku aksen 8×8 di kiri atas tiap kolom.
+import { ed } from '../../../lib/edit';
+
+interface Props {
+  items: { label?: string; title: string; description: string }[];
+  glass?: boolean;
+  /** opacity scrim di bawah kaca (dihitung dari foto, lib/color glassScrim) */
+  scrim?: number;
+  class?: string;
+}
+const { items, glass = false, scrim = 0, class: cls } = Astro.props;
+const l = Astro.locals;
+---
+
+{
+  items.length > 0 && (
+    <ul
+      class:list={['svc-cols', glass && 'glass svc-glass', cls]}
+      style={glass ? `--glass-scrim:${scrim}` : undefined}
+      role="list"
+      data-rise
+      data-carousel-dots={glass ? '' : undefined}
+    >
+      {items.map((c, i) => (
+        <li class="svc-col corner-mark">
+          {c.label && (
+            <p class="svc-label" {...ed(l, `serviceColumns.${i}.label`)}>
+              {c.label}
+            </p>
+          )}
+          <h2 class="svc-title" {...ed(l, `serviceColumns.${i}.title`)}>
+            {c.title}
+          </h2>
+          <p class="svc-desc" {...ed(l, `serviceColumns.${i}.description`)}>
+            {c.description}
+          </p>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
+<style>
+  .svc-cols {
+    display: grid;
+    gap: 24px;
+  }
+  @media (min-width: 768px) {
+    .svc-cols {
+      grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr));
+      gap: 32px;
+    }
+  }
+  .svc-col {
+    position: relative;
+    padding: 16px 0 0 16px;
+  }
+  .svc-label {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-variant-numeric: tabular-nums;
+  }
+  .svc-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.25rem, 1.1rem + 0.4vw, 1.5rem);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    text-transform: none;
+  }
+  .svc-desc {
+    margin-top: 8px;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 34ch;
+  }
+  /* Panel kaca (Showcase): kolom dipisah garis tipis */
+  .svc-glass {
+    padding: 20px 8px;
+    gap: 0;
+    border-radius: var(--glass-radius);
+  }
+  .svc-glass .svc-col {
+    padding: 8px 24px 8px 32px;
+  }
+  @media (min-width: 768px) {
+    .svc-glass .svc-col + .svc-col {
+      border-left: 1px solid var(--glass-border);
+    }
+    .svc-glass .svc-col::before {
+      left: 16px;
+      top: 6px;
+    }
+  }
+  /* Mobile: panel kaca jadi carousel scroll-snap, satu kolom per layar */
+  @media (max-width: 767px) {
+    .svc-glass {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: 100%;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+    }
+    .svc-glass::-webkit-scrollbar {
+      display: none;
+    }
+    .svc-glass .svc-col {
+      scroll-snap-align: start;
+    }
+  }
+</style>

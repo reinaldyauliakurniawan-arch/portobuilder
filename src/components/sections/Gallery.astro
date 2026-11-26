@@ -1,0 +1,56 @@
+---
+import type { Section } from '../../lib/schemas';
+import Img from '../ui/Img.astro';
+import { cdnUrl } from '../../lib/image';
+
+import { ed } from '../../lib/edit';
+import { getStrings } from '../../lib/i18n';
+interface Props {
+  data: Extract<Section, { type: 'gallery' }>;
+  group?: string;
+}
+const l = Astro.locals;
+const { data, group = 'galeri' } = Astro.props;
+const masonry = data.variant === 'masonry';
+const t = await getStrings(Astro.locals);
+---
+
+<section class="section">
+  <div class="container-x">
+    {data.title && <h2 class="h2 mb-10 md:mb-14" data-reveal {...ed(l, 'title')}>{data.title}</h2>}
+    <ul class:list={[masonry ? 'columns-1 gap-6 sm:columns-2 lg:columns-3' : 'grid gap-6 sm:grid-cols-2 lg:grid-cols-3']} role="list">
+      {
+        data.items.map((g, i) => (
+          <li class:list={[masonry && 'mb-6 break-inside-avoid']} data-reveal>
+            <figure>
+              <button
+                type="button"
+                class="gallery-btn block w-full overflow-hidden rounded-[var(--radius)]"
+                data-lightbox={group}
+                data-src={cdnUrl(g.image, 2000, undefined, 75, Astro.locals)}
+                data-alt={g.alt}
+                data-caption={g.caption ?? ''}
+                aria-label={`${t.enlarge}: ${g.alt}`}
+              >
+                <Img src={g.image} alt={g.alt} ratio={masonry ? undefined : 4 / 3} sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw" />
+              </button>
+              {g.caption && <figcaption class="meta mt-2" {...ed(l, `items.${i}.caption`)}>{g.caption}</figcaption>}
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .gallery-btn {
+    cursor: zoom-in;
+  }
+  .gallery-btn :global(img) {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .gallery-btn:hover :global(img) {
+    transform: scale(1.03);
+  }
+</style>

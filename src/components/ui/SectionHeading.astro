@@ -1,0 +1,29 @@
+---
+import { ed } from '../../lib/edit';
+
+interface Props {
+  eyebrow?: string;
+  title?: string;
+  intro?: string;
+  center?: boolean;
+  id?: string;
+  /** path field untuk editor visual */
+  paths?: { eyebrow?: string; title?: string; intro?: string };
+}
+const { eyebrow, title, intro, center = false, id, paths = { eyebrow: 'eyebrow', title: 'title', intro: 'intro' } } = Astro.props;
+const l = Astro.locals;
+---
+
+{
+  (eyebrow || title || intro) && (
+    <header class:list={['mb-10 md:mb-14 max-w-3xl', center && 'mx-auto text-center']} data-reveal>
+      {eyebrow && <p class="eyebrow mb-3" {...ed(l, paths.eyebrow)}>{eyebrow}</p>}
+      {title && (
+        <h2 class="h2" id={id} {...ed(l, paths.title)}>
+          {title}
+        </h2>
+      )}
+      {intro && <p class="lead mt-4" {...ed(l, paths.intro)}>{intro}</p>}
+    </header>
+  )
+}

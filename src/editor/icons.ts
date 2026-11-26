@@ -1,0 +1,20 @@
+// Ikon garis 24px (gaya Lucide), dipakai panel (Icon.svelte) dan toolbar kanvas (string HTML).
+export const ICONS: Record<string, string> = {
+  drag: 'M9 5h.01M9 12h.01M9 19h.01M15 5h.01M15 12h.01M15 19h.01',
+  up: 'm18 15-6-6-6 6',
+  down: 'm6 9 6 6 6-6',
+  back: 'm15 18-6-6 6-6',
+  copy: 'M8 8h12v12H8zM4 16V4h12',
+  eye: 'M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z',
+  trash: 'M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14',
+  plus: 'M12 5v14M5 12h14',
+  x: 'M18 6 6 18M6 6l12 12',
+  undo: 'M9 14 4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3',
+  redo: 'm15 14 5-5-5-5M20 9H9a5 5 0 0 0 0 10h3',
+  external: 'M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6',
+  desktop: 'M3 4h18v12H3zM8 20h8M12 16v4',
+  tablet: 'M5 2h14v20H5zM11 18h2',
+  mobile: 'M7 2h10v20H7zM11 18h2',
+  panel: 'M3 3h18v18H3zM15 3v18',
+  settings: 'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6',
+};

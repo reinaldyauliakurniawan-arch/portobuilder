@@ -1,0 +1,8 @@
+---
+import AboutView from '../components/pages/AboutView.astro';
+import { getAbout } from '../lib/content';
+
+const about = await getAbout();
+---
+
+<AboutView about={about} />

@@ -1,0 +1,55 @@
+---
+import type { Section } from '../../lib/schemas';
+
+import { ed } from '../../lib/edit';
+interface Props {
+  data: Extract<Section, { type: 'stats' }>;
+}
+const l = Astro.locals;
+const { data } = Astro.props;
+// "98%" -> 98 + "%"; "1,500+" / "1.500+" -> 1500 + "+" (pemisah ribuan dipertahankan saat animasi).
+// Desimal seperti "4.8/5" tidak dianimasikan.
+const items = data.items.map((it) => {
+  const m = it.value.match(/^(\d{1,3}(?:([.,])\d{3})+|\d+)(?![.,]\d)(.*)$/);
+  return { ...it, num: m ? Number(m[1].replace(/[.,]/g, '')) : undefined, sep: m?.[2] ?? '', suffix: m ? m[3] : '' };
+});
+const cols = ['', '', 'sm:grid-cols-2', 'sm:grid-cols-3', 'sm:grid-cols-2 lg:grid-cols-4'][items.length];
+---
+
+<section class="section">
+  <div class="container-x">
+    {data.title && <h2 class="h2 mb-10 md:mb-14" data-reveal {...ed(l, 'title')}>{data.title}</h2>}
+    <dl class:list={['grid gap-6', cols]}>
+      {
+        items.map((it, i) => (
+          <div data-reveal class:list={['flex flex-col-reverse gap-3', data.variant === 'cards' ? 'card p-8' : 'divider-t pt-6']}>
+            <dt class="meta text-base" {...ed(l, `items.${i}.label`)}>{it.label}</dt>
+            <dd class="stat-num" {...ed(l, `items.${i}.value`)}>
+              {it.num !== undefined ? (
+                <>
+                  <span data-count={it.num} data-sep={it.sep || undefined}>
+                    {it.value.slice(0, it.value.length - it.suffix.length)}
+                  </span>
+                  {it.suffix}
+                </>
+              ) : (
+                it.value
+              )}
+            </dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .stat-num {
+    font-family: var(--font-heading);
+    font-weight: var(--heading-weight);
+    letter-spacing: var(--heading-tracking);
+    font-size: clamp(2.75rem, 2rem + 3vw, 4.5rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

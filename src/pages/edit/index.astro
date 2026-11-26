@@ -1,0 +1,26 @@
+---
+// Editor visual. Statis; kanvas dirender lewat /edit/render.
+import Editor from '../../editor/Editor.svelte';
+import { repo } from '../../../scripts/cms-config.mjs';
+import { fontCss } from '../../lib/fonts';
+import { PRESET_IDS } from '../../lib/themes';
+import '../../editor/editor.css';
+
+const branch = process.env.CMS_BRANCH || 'main';
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Editor situs</title>
+    <link rel="icon" href="/favicon.svg" />
+    <style set:html={fontCss([...PRESET_IDS])}></style>
+  </head>
+  <body>
+    <Editor client:only="svelte" repo={repo()} branch={branch} />
+    <noscript>Editor membutuhkan JavaScript.</noscript>
+  </body>
+</html>

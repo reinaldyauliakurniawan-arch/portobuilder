@@ -1,0 +1,21 @@
+{
+  "title": "Pameran Kemasan Jadul 2026",
+  "slug": "pameran-2026",
+  "pageHeader": { "enabled": false },
+  "sections": [
+    {
+      "type": "hero",
+      "enabled": true,
+      "variant": "fullbleed",
+      "eyebrow": "Segera hadir",
+      "headline": "Pameran kemasan jadul dari pasar loak Nusantara",
+      "subheadline": "120 kemasan dari tahun 1950–1990, dikurasi bersama Museum Kecil Jogja.",
+      "image": "/uploads/sample/hero-dark.webp",
+      "imageAlt": "Komposisi bentuk hijau limau di latar gelap",
+      "imageEdge": "dark-vignette",
+      "edgeIntensity": "medium"
+    }
+  ],
+  "seo": { "description": "", "ogImage": "", "noindex": false },
+  "draft": true
+}

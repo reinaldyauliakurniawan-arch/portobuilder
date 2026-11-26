@@ -1,0 +1,41 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionRenderer from '../SectionRenderer.astro';
+import PageHeader from '../PageHeader.astro';
+import { ed } from '../../lib/edit';
+
+interface Props {
+  page: CollectionEntry<'customPages'>['data'];
+}
+const { page: p } = Astro.props;
+const header = p.pageHeader?.enabled ? p.pageHeader : undefined;
+const firstVisible = p.sections.find((s) => s.enabled);
+// H1: page header, atau Hero pertama, atau judul biasa.
+const heroFirst = !header && firstVisible?.type === 'hero';
+---
+
+<BaseLayout title={p.title} description={p.seo.description} ogImage={p.seo.ogImage} noindex={p.seo.noindex}>
+  {
+    header ? (
+      <PageHeader
+        title={p.title}
+        eyebrow={header.eyebrow}
+        subtitle={header.subtitle}
+        image={header.image}
+        imageAlt={header.imageAlt}
+        imageEdge={header.imageEdge}
+        edgeIntensity={header.edgeIntensity}
+      />
+    ) : (
+      !heroFirst && (
+        <div class="container-x pt-12 md:pt-20">
+          <h1 class="h1" {...ed(Astro.locals, 'page.title')}>
+            {p.title}
+          </h1>
+        </div>
+      )
+    )
+  }
+  <SectionRenderer sections={p.sections} heroIsH1={heroFirst} eagerFirst={!header} />
+</BaseLayout>

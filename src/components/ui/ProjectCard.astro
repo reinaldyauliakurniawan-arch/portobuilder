@@ -1,0 +1,28 @@
+---
+import type { Project } from '../../lib/content';
+import Img from './Img.astro';
+
+interface Props {
+  project: Project;
+  sizes?: string;
+  /** null = rasio asli (masonry) */
+  ratio?: number | null;
+  headingLevel?: 'h2' | 'h3';
+}
+const { project, sizes = '(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw', headingLevel: H = 'h3' } = Astro.props;
+const ratio = Astro.props.ratio === null ? undefined : (Astro.props.ratio ?? 4 / 3);
+const p = project.data;
+---
+
+<article class="card card-hover group flex h-full flex-col" data-category={p.category}>
+  <div class="card-media">
+    <Img src={p.cover} alt={p.coverAlt} ratio={ratio} sizes={sizes} />
+  </div>
+  <div class="flex flex-1 flex-col gap-2 p-6">
+    <p class="meta">{p.category} · {p.year}</p>
+    <H class="h3 card-title">
+      <a href={`/projects/${project.id}`} class="card-link">{p.title}</a>
+    </H>
+    <p class="text-muted line-clamp-3">{p.summary}</p>
+  </div>
+</article>

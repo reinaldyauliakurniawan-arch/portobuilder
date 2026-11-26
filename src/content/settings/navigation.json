@@ -1,0 +1,15 @@
+{
+  "mainMenu": [
+    { "label": "Proyek", "linkType": "builtin", "builtinPage": "projects", "openNewTab": false },
+    { "label": "Layanan", "linkType": "custom", "customPage": "layanan", "openNewTab": false },
+    { "label": "About", "linkType": "builtin", "builtinPage": "about", "openNewTab": false },
+    { "label": "FAQ", "linkType": "custom", "customPage": "faq", "openNewTab": false }
+  ],
+  "ctaButton": { "enabled": true, "label": "Hubungi Saya", "linkType": "builtin", "builtinPage": "#kontak" },
+  "footerMenu": [
+    { "label": "Proyek", "linkType": "builtin", "builtinPage": "projects" },
+    { "label": "Layanan", "linkType": "custom", "customPage": "layanan" },
+    { "label": "FAQ", "linkType": "custom", "customPage": "faq" },
+    { "label": "Kontak", "linkType": "builtin", "builtinPage": "#kontak" }
+  ]
+}

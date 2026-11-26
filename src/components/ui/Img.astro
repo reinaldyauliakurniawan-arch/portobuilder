@@ -1,0 +1,30 @@
+---
+import { responsive } from '../../lib/image';
+
+interface Props {
+  src: string;
+  alt: string;
+  /** lebar/tinggi slot (16/9, 4/3, ...). Kosong = rasio asli. */
+  ratio?: number;
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+  maxWidth?: number;
+}
+const { src, alt, ratio, sizes = '100vw', eager = false, class: cls, maxWidth } = Astro.props;
+const img = await responsive(src, ratio, maxWidth, Astro.locals);
+---
+
+<img
+  src={img.src}
+  srcset={img.srcset}
+  sizes={img.srcset ? sizes : undefined}
+  width={img.width}
+  height={img.height}
+  alt={alt}
+  loading={eager ? 'eager' : 'lazy'}
+  fetchpriority={eager ? 'high' : undefined}
+  decoding={eager ? 'sync' : 'async'}
+  class:list={['block w-full object-cover', cls]}
+  style={ratio ? `aspect-ratio:${ratio}` : undefined}
+/>

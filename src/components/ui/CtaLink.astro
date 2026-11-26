@@ -1,0 +1,26 @@
+---
+import Arrow from './Arrow.astro';
+import { ctaHref, isExternal, type LinkLike } from '../../lib/content';
+import { ed } from '../../lib/edit';
+
+interface Props {
+  link: LinkLike & { label: string };
+  variant?: 'primary' | 'secondary' | 'link';
+  where?: string;
+  class?: string;
+  /** path field label untuk editor visual, mis. "primaryCta" */
+  editPath?: string;
+}
+const { link, variant = 'primary', where = 'Section', class: cls, editPath } = Astro.props;
+const href = await ctaHref(link, where, Astro.locals);
+const ext = isExternal(href);
+---
+
+<a
+  href={href}
+  class:list={[variant === 'link' ? 'link inline-flex items-center gap-1 font-semibold' : ['btn', `btn-${variant}`], cls]}
+  target={ext ? '_blank' : undefined}
+  rel={ext ? 'noopener' : undefined}
+>
+  <span {...ed(Astro.locals, editPath && `${editPath}.label`)}>{link.label}</span><Arrow dir={ext ? 'ne' : 'e'} />
+</a>

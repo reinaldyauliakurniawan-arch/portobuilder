@@ -1,0 +1,112 @@
+---
+import Arrow from './ui/Arrow.astro';
+import { getNavigation, getSite, isExternal } from '../lib/content';
+import { getStrings } from '../lib/i18n';
+
+const l = Astro.locals;
+const [site, nav, t] = await Promise.all([getSite(l), getNavigation(l), getStrings(l)]);
+const year = new Date().getFullYear();
+// 62812... -> +62 812-...
+const waDisplay = site.whatsapp ? `+${site.whatsapp.slice(0, 2)} ${site.whatsapp.slice(2, 5)}-${site.whatsapp.slice(5, 9)}-${site.whatsapp.slice(9)}` : undefined;
+---
+
+<footer class="site-footer mt-auto">
+  <div class="container-x grid gap-12 py-16 md:grid-cols-12 md:py-20">
+    <div class="md:col-span-3">
+      <p class="font-head text-2xl" style="font-weight:var(--heading-weight)">{site.ownerName}</p>
+      <p class="meta mt-1">{site.role}</p>
+      {site.cvFile && <a href={site.cvFile} class="btn btn-secondary mt-6 flex w-fit" download>{t.downloadCv}</a>}
+    </div>
+
+    <div class="md:col-span-4">
+      <h2 class="meta mb-3 font-semibold">{t.contact}</h2>
+      <ul class="grid gap-2" role="list">
+        <li><a href={`mailto:${site.email}`} class="link font-semibold">{site.email}</a></li>
+        {
+          site.whatsapp && (
+            <li>
+              <a href={`https://wa.me/${site.whatsapp}`} class="link" target="_blank" rel="noopener">
+                WhatsApp {waDisplay}
+              </a>
+            </li>
+          )
+        }
+        {
+          site.address && (
+            <li>
+              <address class="meta not-italic">{site.address}</address>
+            </li>
+          )
+        }
+      </ul>
+      {
+        site.socials.length > 0 && (
+          <ul class="mt-6 flex flex-wrap gap-2" role="list" aria-label={t.socials}>
+            {site.socials.map((s) => (
+              <li>
+                <a href={s.url} class="badge social" target="_blank" rel="noopener me">
+                  {s.platform} <Arrow dir="ne" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+
+    {
+      nav.footer.length > 0 && (
+        <nav aria-label={t.footerMenu} class="md:col-span-5">
+          <ul class="footer-menu" role="list">
+            {nav.footer.map((m) => (
+              <li>
+                <a href={m.href} class="footer-link" target={isExternal(m.href) ? '_blank' : undefined} rel={isExternal(m.href) ? 'noopener' : undefined}>
+                  {m.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+  </div>
+  <div class="container-x divider-t flex flex-wrap items-center justify-between gap-4 py-6">
+    <p class="meta">
+      {`© ${year} ${site.ownerName}.${site.footerText ? ` ${site.footerText}` : ''}`}
+    </p>
+    <a href="#top" class="link meta font-semibold">{t.backToTop}</a>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--surface);
+  }
+  .footer-menu {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2px 24px;
+  }
+  .footer-link {
+    display: inline-flex;
+    min-height: 40px;
+    align-items: center;
+    text-decoration: none;
+  }
+  .footer-link:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .social {
+    min-height: 40px;
+    text-decoration: none;
+    background: var(--bg);
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .social:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+</style>

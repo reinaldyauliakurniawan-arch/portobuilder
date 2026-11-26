@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionRenderer from '../SectionRenderer.astro';
+import { getSite } from '../../lib/content';
+import { absolute, personJsonLd } from '../../lib/seo';
+import type { Section } from '../../lib/schemas';
+
+interface Props {
+  sections: Section[];
+}
+const { sections } = Astro.props;
+const site = await getSite(Astro.locals);
+const firstVisible = sections.find((s) => s.enabled);
+const hasHeroH1 = sections.some((s) => s.enabled && s.type === 'hero');
+const ld = personJsonLd(site, new URL('/', Astro.site).href, absolute(site.seo.ogImage, Astro.site));
+---
+
+<BaseLayout jsonLd={ld}>
+  {!hasHeroH1 && <h1 class="sr-only">{site.ownerName} — {site.role}</h1>}
+  <SectionRenderer sections={sections} eagerFirst={!!firstVisible} />
+</BaseLayout>

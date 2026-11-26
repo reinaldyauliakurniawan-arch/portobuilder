@@ -1,0 +1,71 @@
+{
+  "_catatan": "Contoh beranda gaya Cutout. Lihat di /dev/examples/cutout, terapkan dengan: npm run example cutout",
+  "theme": { "preset": "rouge", "accentColor": "auto", "backgroundColor": "", "textColor": "" },
+  "navigation": { "navStyle": "default" },
+  "site": { "nameSuffix": "none", "availability": { "enabled": true, "label": "Terima proyek baru" } },
+  "home": {
+    "sections": [
+      {
+        "type": "hero",
+        "enabled": true,
+        "variant": "cutout",
+        "cutoutImage": "/uploads/sample/cutout-figure.webp",
+        "imageAlt": "Ilustrasi siluet desainer berbaju merah tua",
+        "displayName": "Raka Pratama",
+        "intro": "Desainer brand & produk digital dari Yogyakarta.",
+        "textCta": { "label": "// HUBUNGI SAYA", "linkType": "builtin", "builtinPage": "#kontak" },
+        "rotatingServices": ["Identitas brand", "Desain website", "UI aplikasi", "Arah kreatif"],
+        "nameLayer": "behind"
+      },
+      {
+        "type": "logos",
+        "enabled": true,
+        "variant": "row",
+        "logoTone": "mono",
+        "items": [
+          { "logo": "/uploads/sample/brand-1.svg", "name": "Kalira" },
+          { "logo": "/uploads/sample/brand-2.svg", "name": "Bumiloka" },
+          { "logo": "/uploads/sample/brand-3.svg", "name": "Senandika" },
+          { "logo": "/uploads/sample/brand-4.svg", "name": "Pelita&Co" },
+          { "logo": "/uploads/sample/brand-5.svg", "name": "Arsa Studio" }
+        ]
+      },
+      { "type": "featuredProjects", "enabled": true, "variant": "masonry", "eyebrow": "Karya pilihan", "title": "Proyek terbaru", "count": 6, "source": "featured" },
+      {
+        "type": "aboutShort",
+        "enabled": true,
+        "variant": "split",
+        "eyebrow": "Tentang saya",
+        "title": "Desain yang bekerja, bukan sekadar cantik",
+        "text": "Saya mulai dari pertanyaan sederhana: siapa yang akan memakai ini, dan apa yang mereka butuhkan?",
+        "image": "/uploads/sample/about.webp",
+        "imageAlt": "Ilustrasi potret abstrak",
+        "imageEdge": "frame",
+        "edgeIntensity": "medium",
+        "cta": { "label": "Kenalan lebih jauh", "linkType": "builtin", "builtinPage": "about" }
+      },
+      {
+        "type": "services",
+        "enabled": true,
+        "variant": "numbered",
+        "title": "Bagaimana prosesnya",
+        "items": [
+          { "title": "Ngobrol dulu", "description": "Panggilan video 30 menit, gratis, untuk memahami tujuan proyek." },
+          { "title": "Riset & arah", "description": "Saya pelajari pasar dan pengguna, lalu menyajikan 2–3 arah desain." },
+          { "title": "Desain & uji", "description": "Arah terpilih dikembangkan dan diuji ke pengguna." }
+        ]
+      },
+      {
+        "type": "testimonials",
+        "enabled": true,
+        "variant": "carousel",
+        "title": "Kata mereka",
+        "items": [
+          { "quote": "Raka paham bisnis kami lebih cepat dari agensi mana pun.", "name": "Dewi Lestari", "role": "Pemilik, Kopi Senja", "photo": "/uploads/sample/avatar-1.webp" },
+          { "quote": "Prosesnya rapi dan setiap keputusan desain ada alasannya.", "name": "Bima Santoso", "role": "Product Lead, Nusa Labs", "photo": "/uploads/sample/avatar-2.webp" }
+        ]
+      },
+      { "type": "contact", "enabled": true, "variant": "simple", "title": "Ngobrol yuk", "text": "Terbuka untuk proyek freelance dan kolaborasi.", "showForm": true, "showDirect": true }
+    ]
+  }
+}

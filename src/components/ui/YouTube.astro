@@ -1,0 +1,71 @@
+---
+import Arrow from './Arrow.astro';
+import { parseYouTube, watchUrl } from '../../lib/youtube';
+import { getStrings } from '../../lib/i18n';
+
+interface Props {
+  url: string;
+  title: string;
+  class?: string;
+}
+const { url, title, class: cls } = Astro.props;
+const yt = parseYouTube(url);
+const params = new URLSearchParams({ rel: '0' });
+if (yt.start) params.set('start', String(yt.start));
+const watch = watchUrl(yt);
+const t = await getStrings(Astro.locals);
+---
+
+<figure class:list={['yt', yt.isShort && 'yt-short', cls]}>
+  <lite-youtube
+    videoid={yt.id}
+    params={params.toString()}
+    title={title}
+    playlabel={`${t.play}: ${title}`}
+    data-yt-id={yt.id}
+    style={`background-image:url("https://i.ytimg.com/vi/${yt.id}/hqdefault.jpg")`}
+  >
+    <a href={watch} class="lyt-playbtn" title={`${t.play}: ${title}`}>
+      <span class="lyt-visually-hidden">{t.play}: {title}</span>
+    </a>
+  </lite-youtube>
+  <figcaption class="meta mt-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+    <span>{title}</span>
+    <a class="link" href={watch} target="_blank" rel="noopener">{t.watchYoutube} <Arrow dir="ne" /></a>
+  </figcaption>
+</figure>
+
+<script>
+  import 'lite-youtube-embed/src/lite-yt-embed.css';
+  import 'lite-youtube-embed';
+
+  // Thumbnail maxresdefault bila ada; YouTube mengembalikan placeholder 120 px bila tidak.
+  function upgradeThumbs() {
+    document.querySelectorAll<HTMLElement>('lite-youtube[data-yt-id]:not([data-thumb])').forEach((el) => {
+      el.dataset.thumb = '1';
+      const url = `https://i.ytimg.com/vi/${el.dataset.ytId}/maxresdefault.jpg`;
+      const img = new Image();
+      img.onload = () => {
+        if (img.naturalWidth > 120) el.style.backgroundImage = `url("${url}")`;
+      };
+      img.src = url;
+    });
+  }
+  document.addEventListener('astro:page-load', upgradeThumbs);
+</script>
+
+<style>
+  .yt :global(lite-youtube) {
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-width: none;
+    background-color: var(--surface);
+  }
+  .yt-short {
+    max-width: 360px;
+    margin-inline: auto;
+  }
+  .yt-short :global(lite-youtube::after) {
+    padding-bottom: calc(100% / (9 / 16));
+  }
+</style>

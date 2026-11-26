@@ -1,0 +1,80 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionRenderer from '../SectionRenderer.astro';
+import EdgeImage from '../ui/EdgeImage.astro';
+import Markdown from '../ui/Markdown.astro';
+import { ed } from '../../lib/edit';
+import { getStrings } from '../../lib/i18n';
+
+interface Props {
+  about: CollectionEntry<'about'>['data'];
+}
+const { about } = Astro.props;
+const l = Astro.locals;
+const t = await getStrings(Astro.locals);
+---
+
+<BaseLayout title="About" description={about.headline}>
+  <section class="section pt-12 md:pt-20">
+    <div class="container-x grid items-start gap-12 md:grid-cols-12 md:gap-16">
+      <div class="md:sticky md:top-28 md:col-span-5" data-hero-line>
+        <EdgeImage src={about.photo} alt={about.photoAlt} ratio={4 / 5} edge={about.imageEdge ?? 'frame'} intensity={about.edgeIntensity} eager sizes="(min-width: 768px) 40vw, 100vw" />
+      </div>
+      <div class="md:col-span-7">
+        <h1 class="h1 text-[clamp(2.25rem,1.5rem+3vw,4.5rem)]" data-hero-line {...ed(l, 'page.headline')}>{about.headline}</h1>
+        <Markdown content={about.bio} class="lead mt-8 max-w-none" />
+
+        {
+          about.experience.length > 0 && (
+            <div class="mt-16">
+              <h2 class="h3 mb-6">{t.experience}</h2>
+              <ol class="timeline" role="list">
+                {about.experience.map((e, i) => (
+                  <li class="relative pb-10 pl-8" data-reveal>
+                    <p class="meta" {...ed(l, `page.experience.${i}.period`)}>{e.period}</p>
+                    <h3 class="mt-1 text-lg font-semibold">
+                      {e.title} <span class="font-normal text-muted">· {e.org}</span>
+                    </h3>
+                    {e.description && <p class="mt-2 text-muted" {...ed(l, `page.experience.${i}.description`)}>{e.description}</p>}
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )
+        }
+
+        {
+          about.skills.length > 0 && (
+            <div class="mt-6" data-reveal>
+              <h2 class="h3 mb-6">{t.skills}</h2>
+              <ul class="flex flex-wrap gap-2" role="list">
+                {about.skills.map((s) => (
+                  <li class="badge">{s}</li>
+                ))}
+              </ul>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </section>
+  <SectionRenderer sections={about.sections} heroIsH1={false} eagerFirst={false} />
+</BaseLayout>
+
+<style>
+  .timeline {
+    border-left: 2px solid var(--divider);
+  }
+  .timeline > li::before {
+    content: '';
+    position: absolute;
+    left: -7px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 9999px;
+    background: var(--accent);
+    box-shadow: 0 0 0 4px var(--bg);
+  }
+</style>

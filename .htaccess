@@ -1,0 +1,16 @@
+# Hanya untuk Laragon/Apache lokal (portobuilder.test): sajikan hasil build di dist/.
+# Jalankan `npm run build` dulu. Tidak ikut ter-deploy ke Netlify.
+DirectorySlash Off
+ErrorDocument 404 /dist/404.html
+RewriteEngine On
+
+# Aset & file: /_astro/x.js -> dist/_astro/x.js
+RewriteCond %{DOCUMENT_ROOT}/dist/$1 -f
+RewriteRule ^(.+)$ dist/$1 [L]
+
+# Halaman: / -> dist/index.html, /projects -> dist/projects/index.html
+RewriteCond %{DOCUMENT_ROOT}/dist/$1/index.html -f
+RewriteRule ^(.*?)/?$ dist/$1/index.html [L]
+
+# Sisanya (source code, .git, dll.) tidak disajikan.
+RewriteRule ^(?!dist/) - [R=404,L]

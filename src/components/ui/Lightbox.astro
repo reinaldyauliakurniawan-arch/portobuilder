@@ -1,0 +1,155 @@
+---
+import Icon from './Icon.astro';
+import { getStrings } from '../../lib/i18n';
+// Satu <dialog> per halaman. Tombol pemicu: [data-lightbox="grup"] dengan data-src/data-alt/data-caption.
+// <dialog> modal memberi focus trap & tutup dengan Esc secara native.
+const t = await getStrings(Astro.locals);
+---
+
+<dialog id="lightbox" class="lightbox" aria-label={t.gallery}>
+  <div class="lb-inner">
+    <figure class="lb-figure">
+      <img class="lb-img" alt="" />
+      <figcaption class="lb-caption meta"></figcaption>
+    </figure>
+    <p class="lb-count meta" aria-live="polite"></p>
+    <button type="button" class="lb-btn lb-close" data-lb="close" aria-label={t.closeGallery}><Icon name="x" /></button>
+    <button type="button" class="lb-btn lb-prev" data-lb="prev" aria-label={t.prevImage}><Icon name="chevron-left" /></button>
+    <button type="button" class="lb-btn lb-next" data-lb="next" aria-label={t.nextImage}><Icon name="chevron-right" /></button>
+  </div>
+</dialog>
+
+<script>
+  function init() {
+    const dlg = document.getElementById('lightbox') as HTMLDialogElement | null;
+    if (!dlg || dlg.dataset.ready) return;
+    dlg.dataset.ready = '1';
+    const img = dlg.querySelector<HTMLImageElement>('.lb-img')!;
+    const cap = dlg.querySelector<HTMLElement>('.lb-caption')!;
+    const count = dlg.querySelector<HTMLElement>('.lb-count')!;
+    let items: HTMLElement[] = [];
+    let i = 0;
+    let opener: HTMLElement | null = null;
+
+    const show = (n: number) => {
+      i = (n + items.length) % items.length;
+      const it = items[i];
+      img.src = it.dataset.src!;
+      img.alt = it.dataset.alt ?? '';
+      cap.textContent = it.dataset.caption ?? '';
+      count.textContent = items.length > 1 ? `${i + 1} / ${items.length}` : '';
+      dlg.querySelectorAll<HTMLElement>('.lb-prev,.lb-next').forEach((b) => (b.hidden = items.length < 2));
+    };
+
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-lightbox]');
+      if (!t) return;
+      e.preventDefault();
+      opener = t;
+      items = [...document.querySelectorAll<HTMLElement>(`[data-lightbox="${t.dataset.lightbox}"]`)];
+      show(items.indexOf(t));
+      dlg.showModal();
+    });
+    dlg.addEventListener('click', (e) => {
+      const a = (e.target as HTMLElement).closest<HTMLElement>('[data-lb]')?.dataset.lb;
+      if (a === 'close' || e.target === dlg) dlg.close();
+      if (a === 'prev') show(i - 1);
+      if (a === 'next') show(i + 1);
+    });
+    dlg.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') show(i - 1);
+      if (e.key === 'ArrowRight') show(i + 1);
+    });
+    let x0 = 0;
+    dlg.addEventListener('touchstart', (e) => (x0 = e.touches[0].clientX), { passive: true });
+    dlg.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].clientX - x0;
+      if (Math.abs(dx) > 50) show(dx < 0 ? i + 1 : i - 1);
+    });
+    dlg.addEventListener('close', () => opener?.focus());
+  }
+  document.addEventListener('astro:page-load', init);
+</script>
+
+<style>
+  .lightbox {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    color: var(--text);
+  }
+  .lightbox::backdrop {
+    background: color-mix(in srgb, var(--bg) 80%, transparent);
+  }
+  .lb-inner {
+    position: relative;
+    height: 100%;
+    display: grid;
+    place-items: center;
+    padding: 72px 16px 56px;
+  }
+  .lb-figure {
+    max-width: min(1400px, 100%);
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+  .lb-img {
+    max-height: calc(100dvh - 160px);
+    width: auto;
+    object-fit: contain;
+    border-radius: var(--radius);
+  }
+  .lb-count {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+  }
+  .lb-btn {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 9999px;
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+  }
+  .lb-btn:hover {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .lb-close {
+    top: 12px;
+    right: 12px;
+  }
+  .lb-prev,
+  .lb-next {
+    top: 50%;
+    translate: 0 -50%;
+  }
+  .lb-prev {
+    left: 12px;
+  }
+  .lb-next {
+    right: 12px;
+  }
+  @media (max-width: 640px) {
+    .lb-prev,
+    .lb-next {
+      top: auto;
+      bottom: 8px;
+      translate: none;
+    }
+  }
+</style>

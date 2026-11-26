@@ -1,0 +1,53 @@
+{
+  "title": "Pertanyaan yang sering ditanyakan",
+  "slug": "faq",
+  "pageHeader": {
+    "enabled": true,
+    "eyebrow": "FAQ",
+    "subtitle": "Jawaban singkat untuk hal-hal yang biasanya ditanyakan sebelum mulai proyek."
+  },
+  "sections": [
+    {
+      "type": "faq",
+      "enabled": true,
+      "variant": "accordion",
+      "title": "Sebelum proyek",
+      "items": [
+        { "question": "Berapa lama satu proyek identitas brand?", "answer": "Rata-rata **3–4 minggu** dari panggilan pertama sampai serah terima file. Proyek yang lebih besar, misalnya dengan kemasan, bisa 6–8 minggu." },
+        { "question": "Apakah bisa bayar bertahap?", "answer": "Bisa. Umumnya 50% di awal dan 50% saat serah terima. Untuk proyek di atas Rp20 juta, saya bagi tiga termin." },
+        { "question": "Apakah Anda menerima proyek dari luar Yogyakarta?", "answer": "Tentu. Sebagian besar klien saya ada di luar kota dan kami bekerja lewat panggilan video, Figma, dan WhatsApp." },
+        { "question": "File apa saja yang saya terima?", "answer": "Semua file sumber (Figma/AI), logo dalam format SVG, PNG, dan PDF, serta panduan brand. Lihat juga [halaman layanan](/layanan)." }
+      ]
+    },
+    {
+      "type": "faq",
+      "enabled": true,
+      "variant": "two-column",
+      "title": "Selama proyek",
+      "items": [
+        { "question": "Berapa kali revisi?", "answer": "Dua kali revisi besar dan revisi kecil tanpa batas selama masih dalam lingkup yang disepakati." },
+        { "question": "Bagaimana kalau saya tidak suka hasilnya?", "answer": "Karena kita menguji arah desain sejak awal, jarang terjadi. Kalau tetap tidak cocok di tahap arah, Anda cukup membayar uang muka." }
+      ]
+    },
+    {
+      "type": "map",
+      "enabled": true,
+      "variant": "split",
+      "title": "Mampir ke studio",
+      "embedUrl": "https://maps.google.com/maps?q=Tugu%20Yogyakarta&z=15&output=embed",
+      "address": "Jl. Contoh No. 12, Jetis, Yogyakarta 55233",
+      "hours": "Senin–Jumat, 09.00–17.00 (dengan janji temu)"
+    },
+    {
+      "type": "contact",
+      "enabled": true,
+      "variant": "simple",
+      "title": "Masih ada pertanyaan?",
+      "text": "Kirim pesan, saya jawab secepatnya.",
+      "showForm": true,
+      "showDirect": true
+    }
+  ],
+  "seo": { "description": "Jawaban untuk pertanyaan umum soal durasi, pembayaran, revisi, dan file proyek desain bersama Raka Pratama.", "ogImage": "", "noindex": false },
+  "draft": false
+}

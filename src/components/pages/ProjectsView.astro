@@ -1,0 +1,99 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../ui/ProjectCard.astro';
+import { getProjects } from '../../lib/content';
+import { getStrings } from '../../lib/i18n';
+
+const projects = await getProjects(Astro.locals);
+const categories = [...new Set(projects.map((p) => p.data.category))];
+const t = await getStrings(Astro.locals);
+---
+
+<BaseLayout title="Proyek" description={`Kumpulan ${projects.length} proyek: ${categories.join(', ')}.`}>
+  <section class="section pt-12 md:pt-20">
+    <div class="container-x">
+      <header class="mb-10 max-w-3xl md:mb-14">
+        <p class="eyebrow mb-4" data-hero-line>{t.projectsEyebrow}</p>
+        <h1 class="h1" data-hero-line>{t.projectsTitle}</h1>
+      </header>
+
+      {
+        categories.length > 1 && (
+          <div class="mb-10 flex flex-wrap gap-2" role="group" aria-label={t.filter} data-filter data-shown={t.shown}>
+            <button type="button" class="chip" aria-pressed="true" data-cat="">
+              {t.all}
+            </button>
+            {categories.map((c) => (
+              <button type="button" class="chip" aria-pressed="false" data-cat={c}>
+                {c}
+              </button>
+            ))}
+          </div>
+        )
+      }
+      <p class="sr-only" aria-live="polite" data-filter-status></p>
+
+      {projects.length === 0 && <p class="lead">{t.noProjects}</p>}
+      <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" role="list" data-project-list>
+        {
+          projects.map((p, i) => (
+            <li data-category={p.data.category} data-reveal={i > 2 ? '' : undefined}>
+              <ProjectCard project={p} headingLevel="h2" />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  function initFilter() {
+    const group = document.querySelector<HTMLElement>('[data-filter]');
+    if (!group) return;
+    const items = document.querySelectorAll<HTMLElement>('[data-project-list] > li');
+    const status = document.querySelector<HTMLElement>('[data-filter-status]')!;
+    group.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-cat]');
+      if (!btn) return;
+      const cat = btn.dataset.cat;
+      group.querySelectorAll('[data-cat]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      let n = 0;
+      items.forEach((li) => {
+        const show = !cat || li.dataset.category === cat;
+        li.hidden = !show;
+        if (show) {
+          n++;
+          li.style.opacity = '1';
+          li.style.transform = 'none';
+        }
+      });
+      status.textContent = `${n} ${group.dataset.shown}`;
+    });
+  }
+  document.addEventListener('astro:page-load', initFilter);
+</script>
+
+<style>
+  .chip {
+    min-height: 44px;
+    padding: 8px 18px;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+  }
+  .chip:hover {
+    background: var(--surface);
+  }
+  .chip[aria-pressed='true'] {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+  }
+</style>

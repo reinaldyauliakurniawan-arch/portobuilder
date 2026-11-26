@@ -1,0 +1,131 @@
+/*
+ * Token non-warna per preset. Warna (--bg, --text, --accent, dst.) dihitung saat build
+ * oleh src/lib/color.ts dan disuntikkan di BaseLayout, supaya kontras AA selalu terjamin.
+ * Font (--font-heading/--font-body) dari src/lib/fonts.ts.
+ */
+
+:root {
+  /* Teks di atas foto selalu putih; overlay hitam dihitung saat build (lib/image.ts). */
+  --on-image: #ffffff;
+  --scrim: 0 0 0;
+
+  /* Kaca (navbar glass-center & panel Showcase). Selalu dipakai di atas skema gelap lokal. */
+  --glass-bg: rgb(255 255 255 / 0.06);
+  --glass-blur: blur(16px) saturate(140%);
+  --glass-border: rgb(255 255 255 / 0.14);
+  --glass-highlight: inset 0 1px 0 rgb(255 255 255 / 0.12);
+  --glass-radius: 20px;
+
+  /* Intensitas tepi gambar: posisi awal gradien mask (Bagian 9). */
+  --edge-soft: 70%;
+  --edge-medium: 55%;
+  --edge-strong: 40%;
+
+  --radius: 12px;
+  --radius-card: 16px;
+  --radius-button: 9999px;
+  --heading-weight: 600;
+  --heading-tracking: -0.02em;
+  --heading-case: none;
+  --card-border: 1px solid transparent;
+  --card-border-hover: var(--card-border);
+  --shadow-card: 0 1px 3px color-mix(in srgb, var(--text) 6%, transparent), 0 6px 20px color-mix(in srgb, var(--text) 6%, transparent);
+  --shadow-card-hover: 0 12px 32px color-mix(in srgb, var(--text) 12%, transparent);
+  --shadow-button: none;
+  --shadow-button-hover: none;
+}
+
+[data-theme='editorial'] {
+  --radius: 12px;
+  --radius-card: 16px;
+  --radius-button: 9999px;
+  --heading-weight: 500;
+  --heading-tracking: -0.025em;
+  --shadow-card: 0 1px 2px color-mix(in srgb, var(--text) 6%, transparent), 0 8px 24px color-mix(in srgb, var(--text) 8%, transparent);
+  --shadow-card-hover: 0 16px 40px color-mix(in srgb, var(--text) 14%, transparent);
+}
+
+[data-theme='mono'] {
+  --radius: 8px;
+  --radius-card: 12px;
+  --radius-button: 12px;
+  --heading-weight: 600;
+  --heading-tracking: -0.035em;
+  --shadow-card: 0 1px 3px color-mix(in srgb, var(--text) 6%, transparent), 0 6px 20px color-mix(in srgb, var(--text) 6%, transparent);
+  --shadow-card-hover: 0 12px 32px color-mix(in srgb, var(--text) 12%, transparent);
+}
+
+[data-theme='midnight'] {
+  --radius: 12px;
+  --radius-card: 16px;
+  --radius-button: 12px;
+  --heading-weight: 600;
+  --heading-tracking: -0.03em;
+}
+
+[data-theme='soft'] {
+  --radius: 16px;
+  --radius-card: 24px;
+  --radius-button: 9999px;
+  --heading-weight: 500;
+  --heading-tracking: -0.02em;
+  --shadow-card: 0 10px 30px color-mix(in srgb, var(--accent) 12%, transparent);
+  --shadow-card-hover: 0 18px 44px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+[data-theme='brutal'] {
+  --radius: 8px;
+  --radius-card: 12px;
+  --radius-button: 12px;
+  --heading-weight: 800;
+  --heading-tracking: -0.02em;
+  --heading-case: uppercase;
+  --card-border: 2px solid var(--text);
+  --shadow-card: 6px 6px 0 var(--text);
+  --shadow-card-hover: 10px 10px 0 var(--text);
+  --shadow-button: 4px 4px 0 var(--text);
+  --shadow-button-hover: 6px 6px 0 var(--text);
+}
+
+[data-theme='nusantara'] {
+  --radius: 12px;
+  --radius-card: 16px;
+  --radius-button: 9999px;
+  --heading-weight: 600;
+  --heading-tracking: -0.025em;
+  --shadow-card: 0 4px 16px color-mix(in srgb, var(--text) 8%, transparent);
+  --shadow-card-hover: 0 12px 32px color-mix(in srgb, var(--text) 16%, transparent);
+}
+
+[data-theme='noir'] {
+  --radius: 10px;
+  --radius-card: 12px;
+  --radius-button: 9999px;
+  --heading-weight: 600;
+  --heading-tracking: -0.04em;
+}
+
+[data-theme='rouge'] {
+  --radius: 12px;
+  --radius-card: 16px;
+  --radius-button: 9999px;
+  --heading-weight: 800;
+  --heading-tracking: -0.03em;
+  --shadow-card: 0 10px 30px color-mix(in srgb, var(--accent) 10%, transparent);
+  --shadow-card-hover: 0 18px 44px color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/* Latar gelap (luminans < 0,18): shadow gelap + border tipis, apa pun presetnya (Bagian 7 langkah 5). */
+[data-card='dark'] {
+  --card-border: 1px solid color-mix(in srgb, var(--text) 9%, transparent);
+  --card-border-hover: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+  --shadow-card: 0 8px 30px rgb(0 0 0 / 0.6);
+  --shadow-card-hover: 0 16px 40px rgb(0 0 0 / 0.7);
+}
+/* Brutal di latar gelap tetap pakai shadow keras berwarna teks. */
+[data-theme='brutal'][data-card='dark'] {
+  --card-border: 2px solid var(--text);
+  --card-border-hover: 2px solid var(--text);
+  --shadow-card: 6px 6px 0 var(--text);
+  --shadow-card-hover: 10px 10px 0 var(--text);
+}

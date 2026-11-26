@@ -1,0 +1,60 @@
+{
+  "_catatan": "Contoh beranda gaya Spotlight. Lihat di /dev/examples/spotlight, terapkan dengan: npm run example spotlight",
+  "theme": { "preset": "noir", "accentColor": "auto", "backgroundColor": "", "textColor": "" },
+  "navigation": { "navStyle": "pill" },
+  "site": { "nameSuffix": "®", "availability": { "enabled": true, "label": "Available" } },
+  "home": {
+    "sections": [
+      {
+        "type": "hero",
+        "enabled": true,
+        "variant": "spotlight",
+        "image": "/uploads/sample/spotlight-subject.webp",
+        "imageAlt": "Ilustrasi siluet desainer dengan cahaya oranye di latar gelap",
+        "displayName": "Raka Pratama",
+        "serviceColumns": [
+          { "label": "01", "title": "Identitas brand", "description": "Logo, warna, dan tipografi yang konsisten di semua titik sentuh." },
+          { "label": "02", "title": "Produk digital", "description": "Aplikasi dan website yang mudah dipakai sejak klik pertama." },
+          { "label": "03", "title": "Arah kreatif", "description": "Kampanye dan konten visual untuk peluncuran produk." }
+        ]
+      },
+      {
+        "type": "logos",
+        "enabled": true,
+        "variant": "tiles",
+        "logoTone": "mono",
+        "items": [
+          { "logo": "/uploads/sample/brand-mark-1.svg", "name": "Kalira" },
+          { "logo": "/uploads/sample/brand-mark-2.svg", "name": "Bumiloka" },
+          { "logo": "/uploads/sample/brand-mark-3.svg", "name": "Senandika" },
+          { "logo": "/uploads/sample/brand-mark-4.svg", "name": "Pelita&Co" },
+          { "logo": "/uploads/sample/brand-mark-5.svg", "name": "Arsa Studio" },
+          { "logo": "/uploads/sample/brand-mark-6.svg", "name": "Nayaka" }
+        ]
+      },
+      { "type": "featuredProjects", "enabled": true, "variant": "list", "eyebrow": "Karya pilihan", "title": "Proyek terbaru", "count": 5, "source": "featured" },
+      {
+        "type": "stats",
+        "enabled": true,
+        "variant": "inline",
+        "items": [
+          { "value": "7+", "label": "Tahun pengalaman" },
+          { "value": "60", "label": "Proyek selesai" },
+          { "value": "35", "label": "Klien dari 9 kota" }
+        ]
+      },
+      {
+        "type": "testimonials",
+        "enabled": true,
+        "variant": "carousel",
+        "title": "Kata mereka",
+        "items": [
+          { "quote": "Raka paham bisnis kami lebih cepat dari agensi mana pun.", "name": "Dewi Lestari", "role": "Pemilik, Kopi Senja", "photo": "/uploads/sample/avatar-1.webp" },
+          { "quote": "Prosesnya rapi dan setiap keputusan desain ada alasannya.", "name": "Bima Santoso", "role": "Product Lead, Nusa Labs", "photo": "/uploads/sample/avatar-2.webp" },
+          { "quote": "Keluhan di CS turun drastis setelah redesign aplikasi.", "name": "Sari Wulandari", "role": "COO, Lumbung", "photo": "/uploads/sample/avatar-3.webp" }
+        ]
+      },
+      { "type": "contact", "enabled": true, "variant": "split", "title": "Mari bekerja sama", "text": "Ceritakan proyek Anda. Saya balas dalam 1×24 jam kerja.", "showForm": true, "showDirect": true }
+    ]
+  }
+}

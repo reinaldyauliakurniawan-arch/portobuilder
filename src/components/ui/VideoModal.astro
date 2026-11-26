@@ -1,0 +1,90 @@
+---
+// Modal video YouTube (dipakai tombol "Tonton Video" hero Showcase). <dialog> modal: focus trap & Esc bawaan.
+// Player dibuat saat dibuka dan dihapus saat ditutup supaya video berhenti.
+import { parseYouTube } from '../../lib/youtube';
+import { getStrings } from '../../lib/i18n';
+
+interface Props {
+  id: string;
+  url: string;
+  title: string;
+}
+const { id, url, title } = Astro.props;
+const yt = parseYouTube(url);
+const params = new URLSearchParams({ rel: '0' });
+if (yt.start) params.set('start', String(yt.start));
+const t = await getStrings(Astro.locals);
+---
+
+<dialog class="video-modal" id={id} aria-label={`Video: ${title}`} data-yt-id={yt.id} data-yt-params={params.toString()} data-yt-title={title}>
+  <button type="button" class="vm-close" data-vm-close aria-label={t.closeVideo}>
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+  </button>
+  <div class="vm-frame" data-vm-frame></div>
+</dialog>
+
+<script>
+  import 'lite-youtube-embed/src/lite-yt-embed.css';
+  import 'lite-youtube-embed';
+
+  function initVideoModals() {
+    document.querySelectorAll<HTMLButtonElement>('[data-video-open]:not([data-ready])').forEach((btn) => {
+      btn.dataset.ready = '1';
+      const dlg = document.getElementById(btn.dataset.videoOpen!) as HTMLDialogElement | null;
+      if (!dlg) return;
+      const frame = dlg.querySelector<HTMLElement>('[data-vm-frame]')!;
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const yt = document.createElement('lite-youtube');
+        yt.setAttribute('videoid', dlg.dataset.ytId!);
+        yt.setAttribute('params', dlg.dataset.ytParams!);
+        yt.setAttribute('title', dlg.dataset.ytTitle!);
+        yt.setAttribute('js-api', '');
+        frame.replaceChildren(yt);
+        dlg.showModal();
+        // Langsung putar: lite-youtube memuat iframe saat diklik.
+        requestAnimationFrame(() => (yt.querySelector('.lyt-playbtn') as HTMLElement | null)?.click());
+      });
+      dlg.querySelector('[data-vm-close]')!.addEventListener('click', () => dlg.close());
+      dlg.addEventListener('click', (e) => e.target === dlg && dlg.close());
+      dlg.addEventListener('close', () => {
+        frame.replaceChildren(); // hentikan video
+        btn.focus();
+      });
+    });
+  }
+  document.addEventListener('astro:page-load', initVideoModals);
+</script>
+
+<style>
+  .video-modal {
+    width: min(1100px, calc(100vw - 32px));
+    max-width: none;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+  .video-modal::backdrop {
+    background: rgb(0 0 0 / 0.8);
+  }
+  .vm-frame :global(lite-youtube) {
+    max-width: none;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .vm-close {
+    position: absolute;
+    right: 0;
+    top: -56px;
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 9999px;
+    border: 1px solid rgb(255 255 255 / 0.3);
+    background: rgb(0 0 0 / 0.4);
+    color: #fff;
+    cursor: pointer;
+  }
+</style>

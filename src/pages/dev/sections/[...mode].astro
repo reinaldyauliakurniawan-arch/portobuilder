@@ -1,0 +1,140 @@
+---
+// Katalog QA: semua section × varian, dengan pemilih preset. noindex, tidak masuk sitemap.
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import SectionRenderer from '../../../components/SectionRenderer.astro';
+import EdgeImage from '../../../components/ui/EdgeImage.astro';
+import { catalog, sample, type Mode } from '../../../lib/dev-samples';
+import { PRESET_IDS, PRESETS, resolveTheme } from '../../../lib/themes';
+import { EDGE_INTENSITIES, IMAGE_EDGES } from '../../../lib/schemas';
+import { getTheme } from '../../../lib/content';
+
+export const getStaticPaths = (() => [{ params: { mode: undefined } }, { params: { mode: 'max' } }, { params: { mode: 'min' } }]) satisfies GetStaticPaths;
+
+const mode = (Astro.params.mode ?? 'normal') as Mode;
+const current = await getTheme();
+const themes = Object.fromEntries(
+  PRESET_IDS.map((id) => {
+    const c = resolveTheme({ preset: id, motion: 'full' });
+    return [id, { vars: Object.entries(c.vars).map(([k, v]) => `${k}:${v}`).join(';'), card: c.cardMode }];
+  }),
+);
+const start = themes[current.preset];
+const modes: [Mode, string, string][] = [
+  ['normal', 'Normal', '/dev/sections'],
+  ['max', 'Teks maksimum', '/dev/sections/max'],
+  ['min', 'Field opsional kosong', '/dev/sections/min'],
+];
+---
+
+<BaseLayout title={`Katalog section (${mode})`} noindex allPresets={[...PRESET_IDS]}>
+  <div class="dev-bar sticky top-[72px] z-30">
+    <div class="container-x flex flex-wrap items-center gap-x-6 gap-y-3 py-3">
+      <h1 class="font-semibold">Katalog section</h1>
+      <div class="flex flex-wrap gap-2" role="group" aria-label="Preset">
+        {
+          PRESET_IDS.map((id) => (
+            <button type="button" class="dev-chip" data-preset={id} aria-pressed={id === current.preset ? 'true' : 'false'}>
+              {PRESETS[id].name}
+            </button>
+          ))
+        }
+      </div>
+      <nav class="flex flex-wrap gap-2" aria-label="Mode konten">
+        {
+          modes.map(([m, label, href]) => (
+            <a href={href} class="dev-chip" aria-current={m === mode ? 'page' : undefined}>
+              {label}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </div>
+
+  <div id="dev-stage" data-theme={current.preset} data-card={start.card} style={start.vars} data-themes={JSON.stringify(themes)}>
+    {
+      catalog.map(({ type, variant }) => (
+        <div class="dev-item">
+          <p class="dev-label container-x">
+            {type} · <strong>{variant}</strong>
+          </p>
+          <SectionRenderer sections={[sample(type, variant, mode)]} heroIsH1={false} eagerFirst={false} />
+        </div>
+      ))
+    }
+
+    {
+      mode === 'normal' && (
+        <section class="section">
+          <div class="container-x">
+            <h2 class="h2 mb-10">Tepi gambar × intensitas</h2>
+            <div class="grid gap-8 sm:grid-cols-3">
+              {IMAGE_EDGES.flatMap((edge) =>
+                EDGE_INTENSITIES.map((intensity) => (
+                  <figure>
+                    <EdgeImage src="/uploads/sample/project-6.webp" alt="" ratio={4 / 3} edge={edge} intensity={intensity} sizes="33vw" />
+                    <figcaption class="meta mt-2">
+                      {edge} · {intensity}
+                    </figcaption>
+                  </figure>
+                )),
+              )}
+            </div>
+          </div>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<script>
+  function initDev() {
+    const stage = document.getElementById('dev-stage');
+    if (!stage) return;
+    const themes = JSON.parse(stage.dataset.themes!) as Record<string, { vars: string; card: string }>;
+    document.querySelectorAll<HTMLButtonElement>('[data-preset]').forEach((b) =>
+      b.addEventListener('click', () => {
+        const id = b.dataset.preset!;
+        stage.dataset.theme = id;
+        stage.dataset.card = themes[id].card;
+        stage.setAttribute('style', themes[id].vars);
+        document.querySelectorAll('[data-preset]').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      }),
+    );
+  }
+  document.addEventListener('astro:page-load', initDev);
+</script>
+
+<style>
+  .dev-bar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--divider);
+    font-size: var(--fs-small);
+  }
+  .dev-chip {
+    min-height: 36px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+  }
+  .dev-chip[aria-pressed='true'],
+  .dev-chip[aria-current='page'] {
+    background: var(--text);
+    color: var(--bg);
+  }
+  .dev-item + .dev-item {
+    border-top: 1px dashed var(--divider);
+  }
+  .dev-label {
+    padding-top: 16px;
+    font-family: ui-monospace, monospace;
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+</style>

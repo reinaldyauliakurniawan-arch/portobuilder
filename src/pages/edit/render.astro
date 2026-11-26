@@ -1,0 +1,42 @@
+---
+// Kanvas editor visual: merender halaman dengan konten draft yang dikirim editor (POST JSON),
+// memakai komponen yang sama dengan situs publik. Tidak di-prerender: jalan sebagai Netlify Function.
+import HomeView from '../../components/pages/HomeView.astro';
+import AboutView from '../../components/pages/AboutView.astro';
+import CustomPageView from '../../components/pages/CustomPageView.astro';
+import ProjectView from '../../components/pages/ProjectView.astro';
+import ProjectsView from '../../components/pages/ProjectsView.astro';
+import { parsePreviewRequest } from '../../lib/preview';
+import { sortProjects } from '../../lib/content';
+
+export const prerender = false;
+
+// Header khusus wajib ada: form lintas-situs tidak bisa mengirimnya, jadi route ini tidak bisa
+// dipakai untuk menyuntik HTML ke origin kita dari situs lain.
+if (Astro.request.method !== 'POST' || Astro.request.headers.get('x-portobuilder-preview') !== '1') {
+  return new Response('Not found', { status: 404 });
+}
+let body: unknown;
+try {
+  body = await Astro.request.json();
+} catch {
+  return new Response(JSON.stringify({ errors: [{ path: '', message: 'Body bukan JSON' }] }), { status: 400 });
+}
+const parsed = parsePreviewRequest(body);
+if (!parsed.ok) {
+  return new Response(JSON.stringify({ errors: parsed.errors }), { status: 422, headers: { 'content-type': 'application/json' } });
+}
+const req = parsed.value;
+Astro.locals.preview = req.context;
+Astro.response.headers.set('cache-control', 'no-store');
+Astro.response.headers.set('x-robots-tag', 'noindex');
+
+const projects = sortProjects(req.context.projects ?? []);
+const i = req.kind === 'project' ? projects.findIndex((p) => p.id === req.project.id) : -1;
+---
+
+{req.kind === 'home' && <HomeView sections={req.page.sections} />}
+{req.kind === 'about' && <AboutView about={req.page} />}
+{req.kind === 'custom' && <CustomPageView page={req.page} />}
+{req.kind === 'projects' && <ProjectsView />}
+{req.kind === 'project' && <ProjectView project={req.project} prev={i > 0 ? projects[i - 1] : undefined} next={i >= 0 ? projects[i + 1] : undefined} />}

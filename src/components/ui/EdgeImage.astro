@@ -1,0 +1,21 @@
+---
+// Gambar dengan perlakuan tepi (Bagian 9). Tidak dipakai di dalam kartu.
+import type { IMAGE_EDGES } from '../../lib/schemas';
+import Img from './Img.astro';
+
+interface Props {
+  src: string;
+  alt: string;
+  ratio?: number;
+  edge?: (typeof IMAGE_EDGES)[number];
+  intensity?: 'soft' | 'medium' | 'strong';
+  sizes?: string;
+  eager?: boolean;
+  class?: string;
+}
+const { edge = 'frame', intensity = 'medium', class: cls, ...img } = Astro.props;
+---
+
+<div class:list={[edge !== 'none' && `edge-${edge}`, `edge-${intensity}`, cls]}>
+  <Img {...img} />
+</div>

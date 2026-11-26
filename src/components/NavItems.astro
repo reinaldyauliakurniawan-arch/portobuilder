@@ -1,0 +1,164 @@
+---
+// Item menu navbar desktop, termasuk dropdown (submenu). Hover/fokus membuka panel; klik/Enter juga
+// (untuk layar sentuh), Esc dan klik di luar menutup. Dipakai gaya default & glass-center.
+import { isExternal } from '../lib/content';
+
+interface Item {
+  label: string;
+  href: string;
+  newTab?: boolean;
+  children: { label: string; href: string }[];
+}
+interface Props {
+  items: Item[];
+  path: string;
+  linkClass: string;
+  submenuLabel: string;
+}
+const { items, path, linkClass, submenuLabel } = Astro.props;
+const isActive = (href: string) => !!href && !href.includes('#') && (href === '/' ? path === '/' : path === href || path.startsWith(`${href}/`));
+const ext = (href: string) => (isExternal(href) ? { target: '_blank', rel: 'noopener' } : {});
+---
+
+{
+  items.map((m, i) =>
+    m.children.length ? (
+      <div class="dd" data-dd>
+        <button
+          type="button"
+          class:list={[linkClass, 'dd-btn']}
+          aria-expanded="false"
+          aria-controls={`dd-${i}`}
+          data-on-page={m.children.some((c) => isActive(c.href)) || isActive(m.href) ? '' : undefined}
+        >
+          {m.label}
+          <svg class="dd-chev" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <ul class="dd-panel" id={`dd-${i}`} role="list" aria-label={`${submenuLabel}: ${m.label}`}>
+          {m.href && (
+            <li>
+              <a href={m.href} class="dd-link" aria-current={isActive(m.href) ? 'page' : undefined} {...ext(m.href)}>
+                {m.label}
+              </a>
+            </li>
+          )}
+          {m.children.map((c) => (
+            <li>
+              <a href={c.href} class="dd-link" aria-current={isActive(c.href) ? 'page' : undefined} {...ext(c.href)}>
+                {c.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ) : (
+      <a href={m.href} class={linkClass} aria-current={isActive(m.href) ? 'page' : undefined} target={m.newTab ? '_blank' : undefined} rel={m.newTab || isExternal(m.href) ? 'noopener' : undefined}>
+        {m.label}
+      </a>
+    ),
+  )
+}
+
+<script>
+  function initDropdowns() {
+    const all = [...document.querySelectorAll<HTMLElement>('[data-dd]:not([data-ready])')];
+    const closeAll = (except?: HTMLElement) =>
+      document.querySelectorAll<HTMLElement>('[data-dd]').forEach((d) => d !== except && d.querySelector('.dd-btn')?.setAttribute('aria-expanded', 'false'));
+    all.forEach((dd) => {
+      dd.dataset.ready = '1';
+      const btn = dd.querySelector<HTMLButtonElement>('.dd-btn')!;
+      btn.addEventListener('click', () => {
+        const open = btn.getAttribute('aria-expanded') !== 'true';
+        closeAll(dd);
+        btn.setAttribute('aria-expanded', String(open));
+      });
+      dd.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          btn.setAttribute('aria-expanded', 'false');
+          btn.focus();
+        }
+      });
+      dd.addEventListener('focusout', (e) => {
+        if (!dd.contains(e.relatedTarget as Node)) btn.setAttribute('aria-expanded', 'false');
+      });
+    });
+    if (all.length) document.addEventListener('click', (e) => !(e.target as HTMLElement).closest('[data-dd]') && closeAll());
+  }
+  document.addEventListener('astro:page-load', initDropdowns);
+</script>
+
+<style>
+  .dd {
+    position: relative;
+  }
+  .dd-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    background: none;
+    border: 0;
+    font: inherit;
+  }
+  .dd-chev {
+    transition: transform 0.2s;
+  }
+  .dd-btn[aria-expanded='true'] .dd-chev {
+    transform: rotate(180deg);
+  }
+  .dd-panel {
+    position: absolute;
+    z-index: 50;
+    top: calc(100% + 8px);
+    left: 50%;
+    min-width: 240px;
+    padding: 8px;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--divider);
+    box-shadow: 0 16px 40px rgb(0 0 0 / 0.18);
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, -4px);
+    transition:
+      opacity 0.2s,
+      transform 0.2s,
+      visibility 0s 0.2s;
+  }
+  /* jembatan hover supaya panel tidak menutup saat kursor turun */
+  .dd-panel::before {
+    content: '';
+    position: absolute;
+    inset: -12px 0 auto;
+    height: 12px;
+  }
+  .dd:hover > .dd-panel,
+  .dd-btn[aria-expanded='true'] + .dd-panel,
+  .dd:focus-within > .dd-panel {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+    transition:
+      opacity 0.2s,
+      transform 0.2s,
+      visibility 0s;
+  }
+  .dd-link {
+    display: block;
+    padding: 10px 14px;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 500;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+  }
+  .dd-link:hover {
+    background: color-mix(in srgb, var(--text) 7%, transparent);
+  }
+  .dd-link[aria-current='page'] {
+    color: var(--accent);
+  }
+</style>

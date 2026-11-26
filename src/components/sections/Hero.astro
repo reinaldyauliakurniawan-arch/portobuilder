@@ -1,0 +1,133 @@
+---
+import type { Section } from '../../lib/schemas';
+import { textOverlayAlpha } from '../../lib/image';
+import EdgeImage from '../ui/EdgeImage.astro';
+import Img from '../ui/Img.astro';
+import CtaLink from '../ui/CtaLink.astro';
+import { ed } from '../../lib/edit';
+import HeroSpotlight from './hero/HeroSpotlight.astro';
+import HeroShowcase from './hero/HeroShowcase.astro';
+import HeroCutout from './hero/HeroCutout.astro';
+
+interface Props {
+  data: Extract<Section, { type: 'hero' }>;
+  /** Hero ini H1 halaman. */
+  first?: boolean;
+  /** Section paling atas: gambar dimuat eager + fetchpriority high. */
+  eager?: boolean;
+  index?: number;
+}
+const { data, first = false, eager = false, index = 0 } = Astro.props;
+const v = data.variant;
+const H = first ? 'h1' : 'h2';
+// fullbleed: default `none`, `frame` tidak berlaku. Lainnya: default `frame`.
+const edge = v === 'fullbleed' ? (data.imageEdge === 'frame' ? 'none' : (data.imageEdge ?? 'none')) : (data.imageEdge ?? 'frame');
+const alpha = v === 'fullbleed' && data.image ? Math.max(await textOverlayAlpha(data.image, 'bottom', Astro.locals), 0.2) : 0;
+const ctas = [
+  [data.primaryCta, 'primaryCta'],
+  [data.secondaryCta, 'secondaryCta'],
+].filter((c): c is [NonNullable<typeof data.primaryCta>, string] => !!c[0]);
+const l = Astro.locals;
+---
+
+{data.variant === 'spotlight' && <HeroSpotlight data={data} first={first} eager={eager} />}
+{data.variant === 'showcase' && <HeroShowcase data={data} first={first} eager={eager} index={index} />}
+{data.variant === 'cutout' && <HeroCutout data={data} first={first} eager={eager} />}
+
+
+{
+  !['spotlight', 'showcase', 'cutout'].includes(v) && (v === 'fullbleed' ? (
+    <section class="hero-full relative isolate flex min-h-[88svh] items-end overflow-hidden" data-hero>
+      {data.image && (
+        <div class:list={['absolute inset-0 -z-10', edge !== 'none' && `edge-${edge}`, `edge-${data.edgeIntensity}`]}>
+          <Img src={data.image} alt={data.imageAlt ?? ''} ratio={16 / 9} eager={eager} class="h-full" sizes="100vw" />
+          {data.videoMp4 && (
+            <video class="hero-video absolute inset-0 h-full w-full object-cover" data-src={data.videoMp4} poster={data.image} muted loop playsinline preload="none" aria-hidden="true" />
+          )}
+        </div>
+      )}
+      <div class="absolute inset-0 -z-10" style={`background:linear-gradient(to top, rgb(var(--scrim) / ${alpha}), rgb(var(--scrim) / ${(alpha * 0.6).toFixed(2)}))`} />
+      <div class="container-x pb-16 pt-40 md:pb-24" style="color:var(--on-image)">
+        <div class="max-w-4xl">
+          {data.eyebrow && <p class="mb-4 font-semibold" data-hero-line {...ed(l, 'eyebrow')}>{data.eyebrow}</p>}
+          <H class="h1" data-hero-line {...ed(l, 'headline')}>{data.headline}</H>
+          {data.subheadline && <p class="mt-6 max-w-2xl text-[length:var(--fs-lead)] leading-normal" data-hero-line {...ed(l, 'subheadline')}>{data.subheadline}</p>}
+          {ctas.length > 0 && (
+            <div class="mt-10 flex flex-wrap gap-4" data-hero-line>
+              {ctas.map(([c, p], i) => <CtaLink link={c} editPath={p} variant={i === 0 ? 'primary' : 'secondary'} where="Hero" class={i === 1 ? 'on-image' : ''} />)}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  ) : v === 'centered' ? (
+    <section class="section pt-16 md:pt-24" data-hero>
+      <div class="container-x text-center">
+        <div class="mx-auto max-w-5xl">
+          {data.eyebrow && <p class="eyebrow mb-5" data-hero-line {...ed(l, 'eyebrow')}>{data.eyebrow}</p>}
+          <H class="h1" data-hero-line {...ed(l, 'headline')}>{data.headline}</H>
+          {data.subheadline && <p class="lead mx-auto mt-6 max-w-2xl" data-hero-line {...ed(l, 'subheadline')}>{data.subheadline}</p>}
+          {ctas.length > 0 && (
+            <div class="mt-10 flex flex-wrap justify-center gap-4" data-hero-line>
+              {ctas.map(([c, p], i) => <CtaLink link={c} editPath={p} variant={i === 0 ? 'primary' : 'secondary'} where="Hero" />)}
+            </div>
+          )}
+        </div>
+        {data.image && (
+          <div class="mt-14 md:mt-20" data-hero-line>
+            <EdgeImage src={data.image} alt={data.imageAlt ?? ''} ratio={16 / 9} edge={edge} intensity={data.edgeIntensity} eager={eager} />
+          </div>
+        )}
+      </div>
+    </section>
+  ) : (
+    <section class="section pt-10 md:pt-16" data-hero>
+      <div class="container-x grid items-center gap-12 md:grid-cols-12 md:gap-8">
+        <div class:list={[data.image ? 'md:col-span-7' : 'md:col-span-10']}>
+          {data.eyebrow && <p class="eyebrow mb-5" data-hero-line {...ed(l, 'eyebrow')}>{data.eyebrow}</p>}
+          <H class="h1" data-hero-line {...ed(l, 'headline')}>{data.headline}</H>
+          {data.subheadline && <p class="lead mt-6 max-w-xl" data-hero-line {...ed(l, 'subheadline')}>{data.subheadline}</p>}
+          {ctas.length > 0 && (
+            <div class="mt-10 flex flex-wrap gap-4" data-hero-line>
+              {ctas.map(([c, p], i) => <CtaLink link={c} editPath={p} variant={i === 0 ? 'primary' : 'secondary'} where="Hero" />)}
+            </div>
+          )}
+        </div>
+        {data.image && (
+          <div class="md:col-span-5" data-hero-line>
+            <EdgeImage src={data.image} alt={data.imageAlt ?? ''} ratio={4 / 5} edge={edge} intensity={data.edgeIntensity} eager={eager} sizes="(min-width: 768px) 40vw, 100vw" />
+          </div>
+        )}
+      </div>
+    </section>
+  ))
+}
+
+<script>
+  // Video latar hanya diputar bila tidak reduced-motion / Save-Data. Tanpa JS: poster saja.
+  function playHeroVideos() {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.dataset.motion === 'off';
+    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
+    document.querySelectorAll<HTMLVideoElement>('video.hero-video[data-src]').forEach((v) => {
+      if (reduce || saveData) return v.remove();
+      v.src = v.dataset.src!;
+      v.removeAttribute('data-src');
+      v.play().catch(() => v.remove());
+    });
+  }
+  document.addEventListener('astro:page-load', playHeroVideos);
+</script>
+
+<style>
+  .hero-full :global(.btn-secondary.on-image) {
+    border-color: var(--on-image);
+    color: var(--on-image);
+  }
+  .hero-full :global(.btn-secondary.on-image:hover) {
+    background: var(--on-image);
+    color: rgb(var(--scrim));
+  }
+  .hero-full :global(img) {
+    aspect-ratio: auto !important;
+  }
+</style>

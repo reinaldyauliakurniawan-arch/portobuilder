@@ -1,0 +1,14 @@
+---
+import type { GetStaticPaths } from 'astro';
+import CustomPageView from '../components/pages/CustomPageView.astro';
+import { getCustomPages, type CustomPage } from '../lib/content';
+
+export const getStaticPaths = (async () => {
+  const pages = await getCustomPages(); // gagal build bila slug bentrok/dicadangkan
+  return pages.map((page) => ({ params: { slug: page.data.slug }, props: { page } }));
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props as { page: CustomPage };
+---
+
+<CustomPageView page={page.data} />

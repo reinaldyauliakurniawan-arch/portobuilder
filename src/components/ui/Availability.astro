@@ -1,0 +1,18 @@
+---
+// Badge status ketersediaan (Pengaturan Situs → Status Ketersediaan). Titik memakai token --success (≥ 3:1).
+interface Props {
+  label?: string;
+  pill?: boolean;
+  class?: string;
+}
+const { label, pill = true, class: cls } = Astro.props;
+---
+
+{
+  label && (
+    <span class:list={['availability', pill && 'is-pill', cls]}>
+      <span class="pulse-dot" aria-hidden="true" />
+      {label}
+    </span>
+  )
+}

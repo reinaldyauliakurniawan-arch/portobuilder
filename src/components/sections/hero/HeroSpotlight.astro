@@ -1,0 +1,106 @@
+---
+// Hero Spotlight: foto muncul dari kegelapan (edge dissolve), nama raksasa menimpa sepertiga bawah foto,
+// lalu 3 kolom layanan. Kontras nama dihitung sebagai large text (3:1) dari luminans foto di area nama.
+import type { Section } from '../../../lib/schemas';
+import { getSite } from '../../../lib/content';
+import { getColors } from '../../../lib/theme-colors';
+import { regionLum } from '../../../lib/image';
+import { luminance, scrimAlpha } from '../../../lib/color';
+import Img from '../../ui/Img.astro';
+import BigName from './BigName.astro';
+import ServiceColumns from './ServiceColumns.astro';
+
+interface Props {
+  data: Extract<Section, { type: 'hero' }>;
+  first?: boolean;
+  eager?: boolean;
+}
+const { data, first = false, eager = false } = Astro.props;
+const l = Astro.locals;
+const [site, { colors }] = await Promise.all([getSite(l), getColors(l)]);
+const name = data.displayName || site.ownerName;
+const edge = !data.imageEdge || data.imageEdge === 'frame' ? 'dissolve' : data.imageEdge;
+const intensity = data.imageEdge ? data.edgeIntensity : 'strong';
+const text = colors.vars['--text'];
+// Teks terang → piksel terburuk = p95; teks gelap → p5. Area: sepertiga bawah foto, tengah.
+const lightText = luminance(text) > 0.5;
+const worst = data.image ? await regionLum(data.image, { x0: 0.1, y0: 0.62, x1: 0.9, y1: 1 }, lightText ? 0.95 : 0.05, l) : 0;
+const alpha = data.image ? scrimAlpha(worst, colors.vars['--bg'], text, 3) : 0;
+---
+
+<section class="spot" data-hero style={`--chars:${[...name].length + 1}`}>
+  {
+    data.image && (
+      <div class:list={['spot-photo', `edge-${edge}`, `edge-${intensity}`]} data-photo-intro="spotlight" data-parallax="15">
+        <Img src={data.image} alt={data.imageAlt ?? ''} eager={eager} sizes="(min-width: 768px) 80vw, 100vw" maxWidth={1800} />
+      </div>
+    )
+  }
+  <div class="spot-name" data-parallax="-10">
+    {alpha > 0 && <div class="spot-scrim" style={`--a:${Math.round(alpha * 100)}%`} aria-hidden="true" />}
+    <BigName name={name} suffix={site.nameSuffix} as={first ? 'h1' : 'p'} editPath="displayName" />
+  </div>
+  {
+    data.serviceColumns.length > 0 && (
+      <div class="container-x spot-cols" style={`--cols:${data.serviceColumns.length}`}>
+        <ServiceColumns items={data.serviceColumns} />
+      </div>
+    )
+  }
+</section>
+
+<style>
+  .spot {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-bottom: var(--section-y);
+    text-align: center;
+  }
+  .spot-photo {
+    position: relative;
+    z-index: 0;
+    height: 90svh;
+    max-height: 1100px;
+    width: min(1200px, 100%);
+    margin-inline: auto;
+  }
+  .spot-photo :global(img) {
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% 0%;
+  }
+  .spot-name {
+    --name-size: min(clamp(64px, 18vw, 240px), calc(96vw / (var(--chars) * 0.6)));
+    position: relative;
+    z-index: 2;
+    margin-top: calc(var(--name-size) * -1.15);
+    font-size: var(--name-size);
+    color: var(--text);
+  }
+  .spot-scrim {
+    position: absolute;
+    inset: -40% 0 -10%;
+    z-index: -1;
+    background: radial-gradient(ellipse 60% 70% at 50% 60%, color-mix(in srgb, var(--bg) var(--a), transparent) 40%, transparent 75%);
+  }
+  .spot-cols {
+    position: relative;
+    z-index: 2;
+    margin-top: clamp(40px, 5vw, 72px);
+    text-align: left;
+  }
+  @media (max-width: 767px) {
+    .spot-photo {
+      height: 70svh;
+    }
+    .spot-name {
+      --name-size: clamp(48px, 20vw, 96px);
+      margin-top: calc(var(--name-size) * -1.3);
+    }
+    .spot-name :global(.big-name) {
+      white-space: normal;
+      text-wrap: balance;
+    }
+  }
+</style>

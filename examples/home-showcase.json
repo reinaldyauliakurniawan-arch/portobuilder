@@ -1,0 +1,53 @@
+{
+  "_catatan": "Contoh beranda gaya Showcase. Lihat di /dev/examples/showcase, terapkan dengan: npm run example showcase",
+  "theme": { "preset": "mono", "accentColor": "auto", "backgroundColor": "", "textColor": "" },
+  "navigation": { "navStyle": "glass-center" },
+  "site": { "nameSuffix": "none", "availability": { "enabled": false, "label": "" } },
+  "home": {
+    "sections": [
+      {
+        "type": "hero",
+        "enabled": true,
+        "variant": "showcase",
+        "eyebrow": "Brand & UI/UX Designer",
+        "headline": "Desain yang membuat produk Anda mudah dipilih",
+        "subheadline": "Identitas visual dan produk digital untuk UMKM sampai startup, dari riset sampai peluncuran.",
+        "image": "/uploads/sample/showcase-subject.webp",
+        "imageAlt": "Ilustrasi siluet desainer dengan cahaya hijau toska",
+        "focusX": 75,
+        "heroVideoUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+        "primaryCta": { "label": "Lihat proyek", "linkType": "builtin", "builtinPage": "projects" },
+        "serviceColumns": [
+          { "title": "Identitas brand", "description": "Logo, warna, tipografi, dan panduan brand." },
+          { "title": "Website & aplikasi", "description": "Desain UI responsif sampai siap dikembangkan." },
+          { "title": "Audit UX", "description": "Uji pengguna dan rekomendasi perbaikan." }
+        ]
+      },
+      { "type": "featuredProjects", "enabled": true, "variant": "grid", "eyebrow": "Karya pilihan", "title": "Proyek yang paling saya banggakan", "count": 6, "source": "featured" },
+      {
+        "type": "services",
+        "enabled": true,
+        "variant": "cards",
+        "title": "Cara kita bisa bekerja sama",
+        "items": [
+          { "title": "Identitas Brand", "description": "Logo, palet warna, tipografi, dan panduan brand 20 halaman.", "price": "Mulai Rp7,5 juta" },
+          { "title": "Desain Website", "description": "Riset singkat, wireframe, dan desain UI responsif.", "price": "Mulai Rp12 juta" },
+          { "title": "Audit UX Aplikasi", "description": "Uji kegunaan dengan 5 pengguna asli dan laporan temuan.", "price": "Mulai Rp5 juta" }
+        ]
+      },
+      {
+        "type": "testimonials",
+        "enabled": true,
+        "variant": "grid",
+        "title": "Kata mereka",
+        "items": [
+          { "quote": "Raka paham bisnis kami lebih cepat dari agensi mana pun.", "name": "Dewi Lestari", "role": "Pemilik, Kopi Senja", "photo": "/uploads/sample/avatar-1.webp" },
+          { "quote": "Prosesnya rapi dan setiap keputusan desain ada alasannya.", "name": "Bima Santoso", "role": "Product Lead, Nusa Labs", "photo": "/uploads/sample/avatar-2.webp" },
+          { "quote": "Keluhan di CS turun drastis setelah redesign aplikasi.", "name": "Sari Wulandari", "role": "COO, Lumbung", "photo": "/uploads/sample/avatar-3.webp" }
+        ]
+      },
+      { "type": "ctaBanner", "enabled": true, "variant": "default", "headline": "Punya proyek yang ingin diwujudkan? Ayo ngobrol dulu", "button": { "label": "Hubungi saya", "linkType": "builtin", "builtinPage": "#kontak" } },
+      { "type": "contact", "enabled": true, "variant": "split", "title": "Mari bekerja sama", "text": "Ceritakan proyek Anda. Saya balas dalam 1×24 jam kerja.", "showForm": true, "showDirect": true }
+    ]
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "sections": [
+    {
+      "type": "hero",
+      "enabled": true,
+      "variant": "split",
+      "eyebrow": "Brand & UI/UX Designer · Yogyakarta",
+      "headline": "Saya merancang brand dan produk digital yang mudah dipahami orang",
+      "subheadline": "Tujuh tahun membantu UMKM, startup, dan lembaga budaya tampil jelas: dari logo dan kemasan sampai aplikasi yang dipakai ribuan orang tiap hari.",
+      "image": "/uploads/sample/hero.webp",
+      "imageAlt": "Komposisi bentuk geometris berwarna oranye bata dan krem",
+      "imageEdge": "vignette",
+      "edgeIntensity": "medium",
+      "primaryCta": { "label": "Lihat proyek", "linkType": "builtin", "builtinPage": "projects" },
+      "secondaryCta": { "label": "Hubungi saya", "linkType": "builtin", "builtinPage": "#kontak" }
+    },
+    {
+      "type": "logos",
+      "enabled": true,
+      "variant": "marquee",
+      "title": "Dipercaya oleh",
+      "items": [
+        { "logo": "/uploads/sample/logo-1.svg", "name": "Kopi Senja" },
+        { "logo": "/uploads/sample/logo-2.svg", "name": "Arunika" },
+        { "logo": "/uploads/sample/logo-3.svg", "name": "Lumbung" },
+        { "logo": "/uploads/sample/logo-4.svg", "name": "Teduh Studio" },
+        { "logo": "/uploads/sample/logo-5.svg", "name": "Pasar Rakyat" },
+        { "logo": "/uploads/sample/logo-6.svg", "name": "Nusa Labs" }
+      ]
+    },
+    {
+      "type": "featuredProjects",
+      "enabled": true,
+      "variant": "grid",
+      "eyebrow": "Karya pilihan",
+      "title": "Proyek yang paling saya banggakan",
+      "count": 6,
+      "source": "featured"
+    },
+    {
+      "type": "aboutShort",
+      "enabled": true,
+      "variant": "split",
+      "eyebrow": "Tentang saya",
+      "title": "Desain yang bekerja, bukan sekadar cantik",
+      "text": "Saya mulai dari pertanyaan sederhana: siapa yang akan memakai ini, dan apa yang mereka butuhkan? Dari situ baru muncul warna, huruf, dan layar.\n\nSebelum freelance, saya memimpin tim desain di sebuah startup logistik dan mengajar tipografi di kampus seni.",
+      "image": "/uploads/sample/about.webp",
+      "imageAlt": "Ilustrasi potret abstrak Raka Pratama",
+      "imageEdge": "frame",
+      "edgeIntensity": "medium",
+      "cta": { "label": "Kenalan lebih jauh", "linkType": "builtin", "builtinPage": "about" }
+    },
+    {
+      "type": "stats",
+      "enabled": true,
+      "variant": "cards",
+      "title": "Dalam angka",
+      "items": [
+        { "value": "7+", "label": "Tahun pengalaman" },
+        { "value": "60", "label": "Proyek selesai" },
+        { "value": "35", "label": "Klien dari 9 kota" },
+        { "value": "4", "label": "Penghargaan desain" }
+      ]
+    },
+    {
+      "type": "video",
+      "enabled": true,
+      "variant": "framed",
+      "youtubeUrl": "https://www.youtube.com/watch?v=aqz-KE-bpKQ",
+      "title": "Showreel motion 2026",
+      "caption": "Kumpulan animasi logo dan UI yang saya kerjakan tahun ini."
+    },
+    {
+      "type": "testimonials",
+      "enabled": true,
+      "variant": "carousel",
+      "title": "Kata mereka",
+      "items": [
+        { "quote": "Raka paham bisnis kami lebih cepat dari agensi mana pun. Logo barunya langsung bikin kedai terasa naik kelas, dan penjualan kemasan naik 30% dalam tiga bulan.", "name": "Dewi Lestari", "role": "Pemilik, Kopi Senja", "photo": "/uploads/sample/avatar-1.webp" },
+        { "quote": "Prosesnya rapi dan terukur. Setiap keputusan desain ada alasannya, jadi tim kami gampang setuju.", "name": "Bima Santoso", "role": "Product Lead, Nusa Labs", "photo": "/uploads/sample/avatar-2.webp" },
+        { "quote": "Aplikasi kami jadi jauh lebih mudah dipakai petani. Keluhan di CS turun drastis setelah redesign.", "name": "Sari Wulandari", "role": "COO, Lumbung", "photo": "/uploads/sample/avatar-3.webp" }
+      ]
+    },
+    {
+      "type": "ctaBanner",
+      "enabled": true,
+      "variant": "default",
+      "headline": "Punya proyek yang ingin diwujudkan? Ayo ngobrol dulu, gratis",
+      "button": { "label": "Lihat layanan", "linkType": "custom", "customPage": "layanan" }
+    },
+    {
+      "type": "contact",
+      "enabled": true,
+      "variant": "split",
+      "title": "Mari bekerja sama",
+      "text": "Ceritakan proyek Anda: tujuan, tenggat, dan anggaran kasar. Saya balas dalam 1×24 jam kerja.",
+      "showForm": true,
+      "showDirect": true
+    }
+  ]
+}

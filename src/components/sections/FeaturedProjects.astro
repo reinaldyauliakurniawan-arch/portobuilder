@@ -1,0 +1,106 @@
+---
+import Arrow from '../ui/Arrow.astro';
+import type { Section } from '../../lib/schemas';
+import { getProjects } from '../../lib/content';
+import SectionHeading from '../ui/SectionHeading.astro';
+import ProjectCard from '../ui/ProjectCard.astro';
+import Img from '../ui/Img.astro';
+import { getStrings } from '../../lib/i18n';
+
+interface Props {
+  data: Extract<Section, { type: 'featuredProjects' }>;
+}
+const { data } = Astro.props;
+const all = await getProjects(Astro.locals);
+let list =
+  data.source === 'featured'
+    ? all.filter((p) => p.data.featured)
+    : data.source === 'category'
+      ? all.filter((p) => p.data.category === data.category)
+      : [...all].sort((a, b) => b.data.year - a.data.year);
+if (data.source === 'featured' && list.length === 0) list = all; // belum ada yang ditandai unggulan
+list = list.slice(0, data.count);
+const t = await getStrings(Astro.locals);
+---
+
+<section class="section">
+  <div class="container-x">
+    <div class="flex flex-wrap items-end justify-between gap-x-8">
+      <SectionHeading eyebrow={data.eyebrow} title={data.title} />
+      <a href="/projects" class="link mb-10 inline-flex items-center gap-1 font-semibold md:mb-14">{t.allProjects} <Arrow /></a>
+    </div>
+    {list.length === 0 && <p class="meta">{t.noProjects}</p>}
+    {
+      data.variant === 'grid' && (
+        <ul class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" role="list">
+          {list.map((p) => (
+            <li data-reveal>
+              <ProjectCard project={p} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    {
+      data.variant === 'masonry' && (
+        <ul class="columns-1 gap-8 sm:columns-2 lg:columns-3" role="list">
+          {list.map((p) => (
+            <li class="mb-8 break-inside-avoid" data-reveal>
+              <ProjectCard project={p} ratio={null} />
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    {
+      data.variant === 'list' && (
+        <ul class="divider-t" role="list">
+          {list.map((p) => (
+            <li class="project-row divider-b group relative" data-reveal>
+              <a href={`/projects/${p.id}`} class="grid grid-cols-[96px_1fr] items-center gap-5 py-6 no-underline sm:grid-cols-[1fr_auto] md:py-8">
+                <div class="overflow-hidden rounded-[var(--radius)] sm:hidden">
+                  <Img src={p.data.cover} alt="" ratio={4 / 3} sizes="96px" />
+                </div>
+                <div>
+                  <h3 class="h3 row-title">{p.data.title}</h3>
+                  <p class="meta mt-1">{p.data.summary}</p>
+                </div>
+                <p class="meta hidden whitespace-nowrap sm:block">
+                  {p.data.category} · {p.data.year}
+                </p>
+              </a>
+              <div class="row-preview pointer-events-none absolute right-40 top-1/2 z-10 hidden w-72 overflow-hidden rounded-[var(--radius-card)] lg:block" aria-hidden="true">
+                <Img src={p.data.cover} alt="" ratio={4 / 3} sizes="288px" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .row-title {
+    font-size: clamp(1.5rem, 1rem + 2.2vw, 3rem);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.15em;
+  }
+  .project-row:hover .row-title,
+  .project-row:focus-within .row-title {
+    text-decoration-line: underline;
+  }
+  .row-preview {
+    opacity: 0;
+    transform: translateY(-50%) scale(0.92) rotate(-2deg);
+    transition:
+      opacity 0.4s,
+      transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: var(--shadow-card-hover);
+  }
+  .project-row:hover .row-preview,
+  .project-row:focus-within .row-preview {
+    opacity: 1;
+    transform: translateY(-50%) scale(1) rotate(0);
+  }
+</style>

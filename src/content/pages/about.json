@@ -1,0 +1,40 @@
+{
+  "photo": "/uploads/sample/about.webp",
+  "photoAlt": "Ilustrasi potret abstrak Raka Pratama",
+  "imageEdge": "vignette",
+  "edgeIntensity": "soft",
+  "headline": "Halo, saya Raka. Saya membantu brand bicara dengan jelas",
+  "bio": "Saya desainer brand dan UI/UX yang tinggal di Yogyakarta. Selama tujuh tahun terakhir saya bekerja dengan kedai kopi, koperasi tani, museum, sampai startup teknologi.\n\nCara kerja saya sederhana: **dengarkan dulu, gambar kemudian**. Setiap proyek dimulai dengan riset singkat bersama pengguna asli, lalu saya uji ide sedini mungkin supaya tidak ada kejutan di akhir.\n\nDi luar pekerjaan, saya mengajar kelas tipografi akhir pekan dan mengoleksi kemasan jadul dari pasar loak.",
+  "experience": [
+    { "period": "2023 — sekarang", "title": "Desainer Independen", "org": "Studio Raka", "description": "Branding dan desain produk untuk 35+ klien di Indonesia dan Singapura." },
+    { "period": "2020 — 2023", "title": "Lead Product Designer", "org": "Kirimin (startup logistik)", "description": "Memimpin 4 desainer, membangun design system, dan menaikkan konversi checkout 18%." },
+    { "period": "2018 — 2020", "title": "Desainer Grafis", "org": "Arunika Creative", "description": "Identitas visual, kemasan, dan kampanye untuk merek FMCG lokal." },
+    { "period": "2019 — sekarang", "title": "Dosen Tamu Tipografi", "org": "Institut Seni Yogyakarta" }
+  ],
+  "skills": ["Brand identity", "UI/UX design", "Design system", "Riset pengguna", "Prototyping", "Tipografi", "Kemasan", "Figma", "Motion dasar"],
+  "sections": [
+    {
+      "type": "gallery",
+      "enabled": true,
+      "variant": "masonry",
+      "title": "Di balik layar",
+      "items": [
+        { "image": "/uploads/sample/gallery-1.webp", "alt": "Sketsa logo di buku catatan", "caption": "Sketsa awal logo Arunika" },
+        { "image": "/uploads/sample/gallery-2.webp", "alt": "Papan moodboard di dinding studio" },
+        { "image": "/uploads/sample/gallery-3.webp", "alt": "Workshop tipografi bersama mahasiswa", "caption": "Kelas tipografi, Maret 2026" },
+        { "image": "/uploads/sample/gallery-4.webp", "alt": "Contoh cetak kemasan kopi" },
+        { "image": "/uploads/sample/gallery-5.webp", "alt": "Pengujian aplikasi bersama petani" },
+        { "image": "/uploads/sample/gallery-6.webp", "alt": "Meja kerja dengan laptop dan sampel kertas" }
+      ]
+    },
+    {
+      "type": "contact",
+      "enabled": true,
+      "variant": "simple",
+      "title": "Ngobrol yuk",
+      "text": "Terbuka untuk proyek freelance, kolaborasi, dan undangan mengisi kelas.",
+      "showForm": false,
+      "showDirect": true
+    }
+  ]
+}

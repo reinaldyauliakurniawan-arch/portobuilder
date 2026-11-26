@@ -1,0 +1,79 @@
+---
+import type { Section } from '../lib/schemas';
+import { faqJsonLd } from '../lib/seo';
+import Hero from './sections/Hero.astro';
+import FeaturedProjects from './sections/FeaturedProjects.astro';
+import RichText from './sections/RichText.astro';
+import Video from './sections/Video.astro';
+import AboutShort from './sections/AboutShort.astro';
+import Stats from './sections/Stats.astro';
+import Logos from './sections/Logos.astro';
+import Testimonials from './sections/Testimonials.astro';
+import Services from './sections/Services.astro';
+import Faq from './sections/Faq.astro';
+import Gallery from './sections/Gallery.astro';
+import Map from './sections/Map.astro';
+import CtaBanner from './sections/CtaBanner.astro';
+import Contact from './sections/Contact.astro';
+
+interface Props {
+  sections: Section[];
+  /** true bila halaman belum punya H1 lain: Hero pertama menjadi H1. */
+  heroIsH1?: boolean;
+  /** Hero pertama memuat gambar eager (LCP). */
+  eagerFirst?: boolean;
+}
+const { sections, heroIsH1 = true, eagerFirst = true } = Astro.props;
+
+const COMPONENTS = {
+  hero: Hero,
+  featuredProjects: FeaturedProjects,
+  richText: RichText,
+  video: Video,
+  aboutShort: AboutShort,
+  stats: Stats,
+  logos: Logos,
+  testimonials: Testimonials,
+  services: Services,
+  faq: Faq,
+  gallery: Gallery,
+  map: Map,
+  ctaBanner: CtaBanner,
+  contact: Contact,
+} as const;
+
+const preview = !!Astro.locals.preview?.canvas;
+for (const s of sections) {
+  if (!(s.type in COMPONENTS)) throw new Error(`[SectionRenderer] Jenis section tidak dikenal: "${(s as { type: string }).type}".`);
+}
+// Indeks asli dipertahankan supaya editor visual bisa memetakan elemen ke data.
+const items = sections.map((s, index) => ({ s, index })).filter(({ s }) => s.enabled || preview);
+const visible = items.filter(({ s }) => s.enabled);
+const firstHero = visible.find(({ s }) => s.type === 'hero')?.index;
+const firstContact = visible.find(({ s }) => s.type === 'contact')?.index;
+const firstIndex = visible[0]?.index;
+const faqs = visible.flatMap(({ s }) => (s.type === 'faq' ? s.items : []));
+---
+
+{
+  items.map(({ s, index: i }) => {
+    const C = COMPONENTS[s.type] as any;
+    const el = (
+      <C
+        data={s}
+        first={s.type === 'hero' && i === firstHero && heroIsH1}
+        eager={eagerFirst && i === firstIndex}
+        index={i}
+        anchor={i === firstContact}
+        group={`galeri-${i}`}
+      />
+    );
+    if (!preview) return el;
+    return (
+      <div data-section={i} data-section-type={s.type} data-hidden={s.enabled ? undefined : 'true'}>
+        {s.enabled ? el : <p class="pb-hidden-section">Section tersembunyi</p>}
+      </div>
+    );
+  })
+}
+{faqs.length > 0 && <script type="application/ld+json" set:html={JSON.stringify(faqJsonLd(faqs))} />}

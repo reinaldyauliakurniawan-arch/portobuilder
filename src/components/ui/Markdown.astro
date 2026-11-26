@@ -1,0 +1,14 @@
+---
+import { marked } from 'marked';
+
+interface Props {
+  content: string;
+  class?: string;
+  inline?: boolean;
+}
+const { content, class: cls, inline = false } = Astro.props;
+// Konten dari editor tepercaya (commit Git lewat CMS), dirender saat build.
+const html = inline ? marked.parseInline(content) : marked.parse(content);
+---
+
+<div class:list={['prose', cls]} set:html={html} />

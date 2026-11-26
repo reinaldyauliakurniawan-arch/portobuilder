@@ -1,0 +1,20 @@
+---
+import Arrow from '../components/ui/Arrow.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getStrings } from '../lib/i18n';
+
+const t = await getStrings(Astro.locals);
+---
+
+<BaseLayout title={t.notFoundTitle} noindex>
+  <section class="section">
+    <div class="container-x max-w-3xl py-12 text-center">
+      <p class="eyebrow mb-4">404</p>
+      <h1 class="h1">{t.notFoundH1}</h1>
+      <p class="lead mx-auto mt-6 max-w-xl">{t.notFoundText}</p>
+      <div class="mt-10 flex flex-wrap justify-center gap-4">
+        <a href="/" class="btn btn-primary">{t.notFoundHome} <Arrow /></a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

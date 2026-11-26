@@ -1,0 +1,40 @@
+---
+// Nama raksasa (Spotlight & Cutout). Huruf dipecah per karakter oleh motion.ts hanya saat animasi aktif;
+// tanpa JS teks tetap utuh dan terbaca screen reader.
+import { ed } from '../../../lib/edit';
+
+interface Props {
+  name: string;
+  suffix?: string;
+  as?: 'h1' | 'p';
+  class?: string;
+  /** lapisan lain (watermark) tidak dibaca screen reader */
+  decorative?: boolean;
+  editPath?: string;
+}
+const { name, suffix, as: Tag = 'h1', class: cls, decorative = false, editPath } = Astro.props;
+const sfx = suffix && suffix !== 'none' ? suffix : '';
+---
+
+<Tag class:list={['big-name', cls]} aria-hidden={decorative ? 'true' : undefined} data-split-chars={decorative ? undefined : ''}>
+  <span {...ed(Astro.locals, editPath)}>{name}</span>{sfx && <sup class="big-name-sfx">{sfx}</sup>}
+</Tag>
+
+<style>
+  .big-name {
+    font-family: var(--font-heading);
+    font-weight: var(--name-weight, 700);
+    letter-spacing: var(--name-tracking, -0.04em);
+    line-height: 0.85;
+    white-space: nowrap;
+    text-transform: none;
+  }
+  .big-name-sfx {
+    font-size: 0.35em;
+    vertical-align: top;
+    position: relative;
+    top: 0.2em;
+    margin-left: 0.04em;
+    letter-spacing: 0;
+  }
+</style>

@@ -376,7 +376,7 @@ Kalau dua orang mengedit bersamaan, yang kedua mendapat pesan "Ada perubahan lai
 | Netlify paket Free | Gratis untuk portfolio pribadi dengan pengunjung wajar. Ada batas bulanan untuk build, bandwidth, fungsi, dan formulir. Cek angka terbaru di netlify.com/pricing. Netlify mengirim email bila mendekati batas; situs tidak tiba-tiba ditagih tanpa Anda memilih paket berbayar. |
 | Domain | Sekitar Rp150–250 ribu per tahun untuk `.com`, `.id`, `.my.id` lebih murah. Opsional. |
 
-**Badge "Powered by Netlify".** Di paket Free, Netlify menampilkan badge kecil "Powered by Netlify" di halaman situs untuk pengunjung. Badge ini disisipkan Netlify, bukan bagian dari template, dan hanya bisa dimatikan di paket berbayar: **Project configuration → General → Powered by Netlify badge**.
+**Badge "Powered by Netlify".** Project Netlify paket Free yang dibuat sejak 19 Agustus 2026 menampilkan badge kecil "Powered by Netlify" di halaman publik. Badge ini disisipkan Netlify, bukan bagian dari template, dan tidak bergantung pada cara deploy. Mematikannya butuh paket Personal atau Pro: **Project configuration → General → Powered by Netlify badge**. Pengunjung bisa menutupnya sendiri lewat "Hide this badge", tapi hanya untuk browser mereka. Detail: docs.netlify.com/manage/projects/powered-by-netlify-badge.
 
 Setiap klik **Publikasikan** memicu satu build di Netlify. Kumpulkan beberapa perubahan lalu publikasikan sekaligus, jangan per kata.
 

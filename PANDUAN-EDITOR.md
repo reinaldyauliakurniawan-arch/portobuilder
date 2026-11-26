@@ -63,7 +63,7 @@ Seret ikon ⠿ pada toolbar section ke posisi baru (garis biru menunjukkan tujua
 ## 5. Mengganti tema dan warna
 
 Tab **Tema**:
-- Klik salah satu dari enam **Preset**. Hasilnya langsung terlihat di halaman.
+- Klik salah satu dari delapan **Preset**. Hasilnya langsung terlihat di halaman.
 - **Warna** latar, teks, dan aksen boleh diganti. Kalau kurang kontras, warna digeser sedikit otomatis, dan panel memberi tahu hasil akhirnya.
 - **Animasi**: Penuh, Halus, atau Mati. Animasi tidak diputar di editor; lihat di situs setelah dipublikasikan.
 

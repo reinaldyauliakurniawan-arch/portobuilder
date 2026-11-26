@@ -2,6 +2,8 @@
 
 Website portfolio statis (Astro + Netlify). Konten diedit di **`/edit`** (editor visual) atau `/admin` (Sveltia CMS, cadangan).
 
+**Baru pertama kali? Baca [BUKU-PANDUAN.md](BUKU-PANDUAN.md)**: pemasangan dari nol sampai online di Netlify, cara memakai editor, domain, formulir kontak, dan pemecahan masalah, untuk orang awam.
+
 - Spesifikasi: [PRD.md](PRD.md)
 - Untuk developer / Claude Code: [CLAUDE.md](CLAUDE.md)
 - Untuk editor: [PANDUAN-EDITOR.md](PANDUAN-EDITOR.md)
